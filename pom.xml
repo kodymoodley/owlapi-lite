@@ -3,40 +3,30 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>net.sourceforge.simpleowlapi</groupId>
-	<artifactId>simpleowlapi-lib</artifactId>
-	<version>1.2.1</version>
-	<name>simpleOWLAPI wrapper for the OWLAPI</name>
+	<groupId>io.github.kodymoodley</groupId>
+	<artifactId>owlapi-lite</artifactId>
+	<version>1.0.0</version>
+	<name>OWLAPI-Lite</name>
 	<description>A light-weight wrapper for the OWLAPI enabling rapid and concise development of OWL ontologies using Manchester OWL Syntax.</description>
-	<url>https://simpleowlapi.sourceforge.io/</url>
+	<url>http://kodymoodley.github.io/owlapi-lite</url>
 	<licenses>
-  	<license>
-    	<name>GNU Affero General Public License, Version 3.0</name>
-    	<url>https://www.gnu.org/licenses/agpl-3.0.txt</url>
-  	</license>
+		<license>
+			<name>GNU Affero General Public License, Version 3.0</name>
+			<url>https://www.gnu.org/licenses/agpl-3.0.txt</url>
+		</license>
 	</licenses>
-	<distributionManagement>
-  	<snapshotRepository>
-    	<id>ossrh</id>
-    	<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-  	</snapshotRepository>
-  	<repository>
-    	<id>ossrh</id>
-    	<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-  	</repository>
-	</distributionManagement>
 	<developers>
-    <developer>
-      <name>Kody Moodley</name>
-      <email>kody.moodley@gmail.com</email>
-      <organization>com.github.kodymoodley</organization>
-      <organizationUrl>https://kodymoodley.github.io/</organizationUrl>
-    </developer>
-  </developers>
-  <scm>
-  	<connection>scm:git:git://github.com/kodymoodley/simpleowlapi.git</connection>
-  	<developerConnection>scm:git:ssh://github.com:kodymoodley/simpleowlapi.git</developerConnection>
-  	<url>https://github.com/kodymoodley/simpleowlapi</url>
+		<developer>
+		<name>Kody Moodley</name>
+		<email>kody.moodley@gmail.com</email>
+		<organization>Independent</organization>
+		<organizationUrl>https://kodymoodley.github.io</organizationUrl>
+		</developer>
+	 </developers>
+  	<scm>
+		<connection>scm:git:git://github.com/kodymoodley/owlapi-lite.git</connection>
+		<developerConnection>scm:git:ssh://github.com:kodymoodley/owlapi-lite.git</developerConnection>
+		<url>https://github.com/kodymoodley/owlapi-lite</url>
 	</scm>
 	<dependencies>
 		<dependency>
@@ -99,59 +89,58 @@
 				</configuration>
 			</plugin>
 			<plugin>
-      	<groupId>org.sonatype.plugins</groupId>
-      	<artifactId>nexus-staging-maven-plugin</artifactId>
-      	<version>1.6.7</version>
-      	<extensions>true</extensions>
-      	<configuration>
-        	<serverId>ossrh</serverId>
-        	<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-        	<autoReleaseAfterClose>true</autoReleaseAfterClose>
-      	</configuration>
-    	</plugin>
-    	<plugin>
-      	<groupId>org.apache.maven.plugins</groupId>
-      	<artifactId>maven-source-plugin</artifactId>
-      	<version>2.2.1</version>
-      	<executions>
-        	<execution>
-          	<id>attach-sources</id>
-          	<goals>
-            	<goal>jar-no-fork</goal>
-          	</goals>
-        	</execution>
-      	</executions>
-    	</plugin>
-    	<plugin>
-      	<groupId>org.apache.maven.plugins</groupId>
-      	<artifactId>maven-javadoc-plugin</artifactId>
-      	<configuration>
-        	<source>8</source>
-    		</configuration>
-      	<version>2.9.1</version>
-      	<executions>
-        	<execution>
-          	<id>attach-javadocs</id>
-          	<goals>
-            	<goal>jar</goal>
-          	</goals>
-        	</execution>
-      	</executions>
-    	</plugin>
-    	<plugin>
-      	<groupId>org.apache.maven.plugins</groupId>
-      	<artifactId>maven-gpg-plugin</artifactId>
-      	<version>1.5</version>
-      	<executions>
-        	<execution>
-          	<id>sign-artifacts</id>
-          	<phase>verify</phase>
-          	<goals>
-            	<goal>sign</goal>
-          	</goals>
-        	</execution>
-      	</executions>
-    	</plugin>
+				<groupId>org.sonatype.central</groupId>
+				<artifactId>central-publishing-maven-plugin</artifactId>
+				<version>0.6.0</version>
+				<extensions>true</extensions>
+				<configuration>
+					<publishingServerId>central</publishingServerId>
+					<autoPublish>true</autoPublish>
+				</configuration>
+    		</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>3.3.0</version>
+				<executions>
+					<execution>
+					<id>attach-sources</id>
+					<goals>
+						<goal>jar-no-fork</goal>
+					</goals>
+					</execution>
+				</executions>
+			</plugin>
+	    	<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<source>8</source>
+					</configuration>
+				<version>3.6.3</version>
+				<executions>
+					<execution>
+					<id>attach-javadocs</id>
+					<goals>
+						<goal>jar</goal>
+					</goals>
+					</execution>
+				</executions>
+			</plugin>
+    		<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>3.1.0</version>
+				<executions>
+					<execution>
+					<id>sign-artifacts</id>
+					<phase>verify</phase>
+					<goals>
+						<goal>sign</goal>
+					</goals>
+					</execution>
+				</executions>
+	    	</plugin>
 		</plugins>
 	</build>
 	<properties> 

@@ -208,7 +208,7 @@ s.owlReasoner.getOWLProfile();
 
 1. Get a copy of the code:
 
-        git clone https://github.com/kodymoodley/simpleowlapi.git
+        git clone https://github.com/kodymoodley/owlapi-lite.git
     
 2. Change into the `owlapi-lite/` directory.
 
