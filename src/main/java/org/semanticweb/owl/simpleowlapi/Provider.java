@@ -5,7 +5,7 @@ import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;
 import org.semanticweb.owlapi.util.SimpleShortFormProvider;
 
 /**
-simpleOWLAPI is a light-weight wrapper for the OWLAPI enabling more concise OWL ontology development.
+OWLAPI-Lite is a light-weight wrapper for the OWLAPI enabling more concise OWL ontology development.
 
 Copyright (C) <2020>  Kody Moodley
 
@@ -23,23 +23,35 @@ You should have received a copy of the GNU Affero General Public License
 along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/** Represents a Provider class providing a default implementation for getting a short form, human-readable label for an entity with an IRI from an ontology.
+/**
+ * Represents a Provider class providing a default implementation for getting a
+ * short form, human-readable label for an entity with an IRI from an ontology.
+ * 
  * @author Kody Moodley
- * @author https://sites.google.com/site/kodymoodley/
+ * @author https://kodymoodley.github.io
  * @version 1.0.1
-*/
-public class Provider extends CachingBidirectionalShortFormProvider 
-{
-
- /** SimpleShortFormProvider instance to return the resource name (after the last hash or slash in the IRI for the input entity).
  */
- private SimpleShortFormProvider provider = new SimpleShortFormProvider();
+public class Provider extends CachingBidirectionalShortFormProvider {
 
- /** Gets the human-readable label from the OWLEntity 
-  * @param entity An OWLEntity object for which to generate the human-readable label
-  * @return A string representation of the human-readable label. 
- */
- protected String generateShortForm(OWLEntity entity) {
-     return provider.getShortForm(entity);
- }
+    /**
+     * Creates a new {@code MyClass}.
+     */
+    public Provider(){}
+
+    /**
+     * SimpleShortFormProvider instance to return the resource name (after the last
+     * hash or slash in the IRI for the input entity).
+     */
+    private SimpleShortFormProvider provider = new SimpleShortFormProvider();
+
+    /**
+     * Gets the human-readable label from the OWLEntity
+     * 
+     * @param entity An OWLEntity object for which to generate the human-readable
+     *               label
+     * @return A string representation of the human-readable label.
+     */
+    protected String generateShortForm(OWLEntity entity) {
+        return provider.getShortForm(entity);
+    }
 }
