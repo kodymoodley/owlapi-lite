@@ -1,8 +1,8 @@
-# simpleOWLAPI
+# OWLAPI-Lite
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 [![Maven Central](https://img.shields.io/maven-central/v/net.sourceforge.simpleowlapi/simpleowlapi-lib.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.sourceforge.simpleowlapi%22%20AND%20a:%22simpleowlapi-lib%22)
 
-simpleOWLAPI is a light-weight wrapper for the [OWLAPI](https://github.com/owlcs/owlapi) that enables faster development of [OWL](https://www.w3.org/TR/owl2-overview/) ontologies with more concise code using the power of the [Manchester OWL Syntax](https://www.w3.org/TR/owl2-manchester-syntax/) and related parsers. The wrapper does not make use of all the features of the more powerful OWLAPI. Rather, it is designed specifically for rapid and concise ontology construction in workflows involving semantic data engineering. It can also be used in contexts such as educational and demonstration settings in courses, workshops and tutorials. In particular, the library can also be used in [Jupyter notebooks](https://jupyter.org/) using a Java kernel such as the [IJava kernel](https://github.com/SpencerPark/IJava).
+OWLAPI-Lite is a light-weight wrapper for the [OWLAPI](https://github.com/owlcs/owlapi) that enables faster development of [OWL](https://www.w3.org/TR/owl2-overview/) ontologies with more concise code using the power of the [Manchester OWL Syntax](https://www.w3.org/TR/owl2-manchester-syntax/) and related parsers. The wrapper does not make use of all the features of the more powerful OWLAPI. Rather, it is designed specifically for rapid and concise ontology construction in workflows involving semantic data engineering. It can also be used in contexts such as educational and demonstration settings in courses, workshops and tutorials. In particular, the library can also be used in [Jupyter notebooks](https://jupyter.org/) using a Java kernel such as the [IJava kernel](https://github.com/SpencerPark/IJava).
 
 ### Usage in Jupyter notebooks
 
@@ -14,11 +14,11 @@ simpleOWLAPI is a light-weight wrapper for the [OWLAPI](https://github.com/owlcs
 
 ##### Importing
 
-When using simpleOWLAPI with [Jupyter notebooks](https://jupyter.org/) using the [IJava kernel](https://github.com/SpencerPark/IJava), importing the library using ``%maven`` and ``%%loadFromPOM`` [magics](https://github.com/SpencerPark/IJava/blob/master/docs/magics.md) is known to cause problems due to [.ivy2](https://ant.apache.org/ivy/history/2.5.0/settings/caches.html) caching conflicts. The solution is to download the .jar file of simpleOWLAPI **with packaged dependencies** from the [releases](https://github.com/kodymoodley/simpleowlapi/releases/) section and import this file manually into your IJava notebook by running the ``%jars path/to/jar/file/simpleowlapi-lib-${version}.jar`` command from a single dedicated cell in the notebook.
+When using OWLAPI-Lite with [Jupyter notebooks](https://jupyter.org/) using the [IJava kernel](https://github.com/SpencerPark/IJava), importing the library using ``%maven`` and ``%%loadFromPOM`` [magics](https://github.com/SpencerPark/IJava/blob/master/docs/magics.md) is known to cause problems due to [.ivy2](https://ant.apache.org/ivy/history/2.5.0/settings/caches.html) caching conflicts. The solution is to download the .jar file of OWLAPI-Lite **with packaged dependencies** from the [releases](https://github.com/kodymoodley/simpleowlapi/releases/) section and import this file manually into your IJava notebook by running the ``%jars path/to/jar/file/simpleowlapi-lib-${version}.jar`` command from a single dedicated cell in the notebook.
 
 ##### Dependencies
 
-The simpleOWLAPI release for Jupyter notebooks is bundled into one .jar file for convenience. This file includes the following dependencies (see [pom.xml](https://github.com/kodymoodley/simpleowlapi/blob/master/pom.xml) for specific versions):
+The OWLAPI-Lite release for Jupyter notebooks is bundled into one .jar file for convenience. This file includes the following dependencies (see [pom.xml](https://github.com/kodymoodley/simpleowlapi/blob/master/pom.xml) for specific versions):
 
 1. The [OWL API](https://github.com/owlcs/owlapi) released under both the [GNU Lesser General Public License (LGPL)](https://www.gnu.org/licenses/lgpl-3.0.html) and the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).
 2. The [HermiT](http://www.hermit-reasoner.com/) OWL reasoner released under the [GNU Lesser General Public License (LGPL)](https://www.gnu.org/licenses/lgpl-3.0.html).
@@ -41,7 +41,7 @@ Include the following dependency in your pom.xml
 
 ### Examples and documentation
 
-For more information on how to use simpleOWLAPI, see the [Javadocs](https://kodymoodley.github.io/simpleowlapi/doc/) and examples below.
+For more information on how to use OWLAPI-Lite, see the [Javadocs](https://kodymoodley.github.io/simpleowlapi/doc/) and examples below.
 
 ##### Examples: ontology editing
 
@@ -210,11 +210,11 @@ s.owlReasoner.getOWLProfile();
 
         git clone https://github.com/kodymoodley/simpleowlapi.git
     
-2. Change into the `simpleowlapi/` directory.
+2. Change into the `owlapi-lite/` directory.
 
 3. Type `mvn clean package`.  On build completion, the `target/` directory will contain two versions of the library: `simpleowlapi-lib-${version}.jar` and `simpleowlapi-lib-${version}-jar-with-dependencies.jar`.
 
 ### License and contributions
-The simpleOWLAPI library is copyrighted by [Kody Moodley](https://sites.google.com/site/kodymoodley/) and released under the [GNU Affero License](https://github.com/kodymoodley/simpleowlapi/blob/master/LICENSE.md).
+The OWLAPI-Lite library is copyrighted by [Kody Moodley](https://sites.google.com/site/kodymoodley/) and released under the [GNU Affero License](https://github.com/kodymoodley/simpleowlapi/blob/master/LICENSE.md).
 
 Contributions and bug reports are helpful and welcome.
