@@ -1,6 +1,8 @@
 package org.semanticweb.owl.simpleowlapi;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.HashSet;
 
 import org.semanticweb.owl.explanation.api.Explanation;
 import org.semanticweb.owl.explanation.api.ExplanationGenerator;
@@ -337,7 +339,7 @@ public class SimpleOWLReasoner {
 			for (int i = 0; i < ontology.getOntologyID().getDefaultDocumentIRI().get().toString().length() + 16; i++)
 				System.out.print("-");
 			System.out.println();
-			for (OWLIndividual i : ontology.getIndividualsInSignature(Imports.EXCLUDED)) {
+			for (OWLIndividual i : ontology.individualsInSignature(Imports.EXCLUDED).collect(Collectors.toCollection(HashSet::new))) {
 				System.out.println(Parser.renderer.render(i));
 				System.out.println("-----------");
 				getTypes(Parser.renderer.render(i));
@@ -365,7 +367,7 @@ public class SimpleOWLReasoner {
 			for (int i = 0; i < opropStr.length() + 32; i++)
 				System.out.print("-");
 			System.out.println();
-			Set<OWLNamedIndividual> inds = ontology.getIndividualsInSignature(Imports.EXCLUDED);
+			Set<OWLNamedIndividual> inds = ontology.individualsInSignature(Imports.EXCLUDED).collect(Collectors.toCollection(HashSet::new));
 			int idx = 1;
 			for (OWLNamedIndividual i : inds) {
 				NodeSet<OWLNamedIndividual> indP = this.reasoner.getObjectPropertyValues(i,
@@ -402,7 +404,7 @@ public class SimpleOWLReasoner {
 			for (int i = 0; i < opropStr.length() + 32; i++)
 				System.out.print("-");
 			System.out.println();
-			Set<OWLNamedIndividual> inds = ontology.getIndividualsInSignature(Imports.EXCLUDED);
+			Set<OWLNamedIndividual> inds = ontology.individualsInSignature(Imports.EXCLUDED).collect(Collectors.toCollection(HashSet::new));
 			for (OWLNamedIndividual i : inds) {
 				NodeSet<OWLNamedIndividual> indP = this.reasoner.getObjectPropertyValues(i,
 						dataFactory.getOWLObjectProperty(IRI.create(ontologyIRI.toString() + opropStr)));
@@ -439,12 +441,12 @@ public class SimpleOWLReasoner {
 			System.out.println();
 			NodeSet<OWLNamedIndividual> inds = reasoner.getInstances(cls, false);
 			int idx = 1;
-			for (OWLNamedIndividual i : inds.getFlattened()) {
+			for (OWLNamedIndividual i : inds.entities().collect(Collectors.toCollection(HashSet::new))) {
 				System.out.println(idx + ". " + Parser.renderer.render(i));
 				idx++;
 			}
 
-			if (inds.getFlattened().size() > 0)
+			if (inds.entities().count() > 0)
 				System.out.println();
 		} catch (InconsistentOntologyException ioe) {
 			System.out.println();
@@ -465,7 +467,7 @@ public class SimpleOWLReasoner {
 			for (int i = 0; i < ontology.getOntologyID().getDefaultDocumentIRI().get().toString().length() + 37; i++)
 				System.out.print("-");
 			System.out.println();
-			for (OWLObjectProperty o : ontology.getObjectPropertiesInSignature(Imports.EXCLUDED)) {
+			for (OWLObjectProperty o : ontology.objectPropertiesInSignature(Imports.EXCLUDED).collect(Collectors.toCollection(HashSet::new))) {
 				getOPropertyAssertions(Parser.renderer.render(o));
 				System.out.println();
 			}
@@ -491,7 +493,7 @@ public class SimpleOWLReasoner {
 			for (int i = 0; i < ontology.getOntologyID().getDefaultDocumentIRI().get().toString().length() + 37; i++)
 				System.out.print("-");
 			System.out.println();
-			for (OWLObjectProperty o : ontology.getObjectPropertiesInSignature(Imports.EXCLUDED)) {
+			for (OWLObjectProperty o : ontology.objectPropertiesInSignature(Imports.EXCLUDED).collect(Collectors.toCollection(HashSet::new))) {
 				getOPropertyAssertions(Parser.renderer.render(o));
 				System.out.println();
 			}

@@ -3,13 +3,16 @@ package org.semanticweb.owl.simpleowlapi;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.formats.ManchesterSyntaxDocumentFormat;
-import org.semanticweb.owlapi.io.OWLOntologyInputSourceException;
 import org.semanticweb.owlapi.io.OWLParserException;
 import org.semanticweb.owlapi.manchestersyntax.renderer.ManchesterOWLSyntaxOWLObjectRendererImpl;
 import org.semanticweb.owlapi.model.AxiomType;
@@ -37,6 +40,7 @@ import org.semanticweb.owlapi.model.OWLSymmetricObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.OWLTransitiveObjectPropertyAxiom;
 import org.semanticweb.owlapi.model.UnknownOWLOntologyException;
 import org.semanticweb.owlapi.model.parameters.Imports;
+import uk.ac.manchester.cs.owl.owlapi.OWLOntologyManagerImpl;
 import org.semanticweb.owlapi.reasoner.OWLReasonerFactory;
 
 // import com.clarkparsia.pellet.owlapiv3.PelletReasonerFactory;
@@ -123,13 +127,15 @@ public class SimpleOWLAPIFactory {
 	 */
 	private static ManchesterOWLSyntaxOWLObjectRendererImpl renderer = Parser.renderer;
 
+	private static ReadWriteLock lock = new ReentrantReadWriteLock();
+
 	/**
 	 * Private constructor for SimpleOWLAPIFactory
 	 * 
 	 * @param selectedReasoner a SelectedReasoner instance
 	 */
 	private SimpleOWLAPIFactory(SelectedReasoner selectedReasoner) {
-		ontologyManager = OWLManager.createOWLOntologyManager();
+		ontologyManager = new OWLOntologyManagerImpl(OWLManager.getOWLDataFactory(), lock);
 		setOWLReasoner(selectedReasoner);
 		fullIRIRendering = false;
 		dataFactory = new OWLDataFactoryImpl();
@@ -182,16 +188,16 @@ public class SimpleOWLAPIFactory {
 	 */
 	public void setOWLReasoner(SelectedReasoner selectedReasoner) {
 		// if (selectedReasoner == SelectedReasoner.HERMIT) {
-		// 	this.selectedReasoner = SelectedReasoner.HERMIT;
-		// 	this.reasonerFactory = new ReasonerFactory();
+		// this.selectedReasoner = SelectedReasoner.HERMIT;
+		// this.reasonerFactory = new ReasonerFactory();
 		// }
 		if (selectedReasoner == SelectedReasoner.JFACT) {
 			this.selectedReasoner = SelectedReasoner.JFACT;
 			this.reasonerFactory = new JFactFactory();
 		}
 		// if (selectedReasoner == SelectedReasoner.PELLET) {
-		// 	this.selectedReasoner = SelectedReasoner.PELLET;
-		// 	this.reasonerFactory = PelletReasonerFactory.getInstance();
+		// this.selectedReasoner = SelectedReasoner.PELLET;
+		// this.reasonerFactory = PelletReasonerFactory.getInstance();
 		// }
 		if (selectedReasoner == SelectedReasoner.ELK) {
 			this.selectedReasoner = SelectedReasoner.ELK;
@@ -297,8 +303,8 @@ public class SimpleOWLAPIFactory {
 			System.out.println(
 					"Selected ontology is: " + selectedOntology.getOntologyID().getOntologyIRI().get().toString());
 		} else {
-			if (ontologyManager.getOntologies().size() > 0) {
-				Iterator<OWLOntology> ontIter = ontologyManager.getOntologies().iterator();
+			if (ontologyManager.ontologies().collect(Collectors.toCollection(HashSet::new)).size() > 0) {
+				Iterator<OWLOntology> ontIter = ontologyManager.ontologies().collect(Collectors.toCollection(HashSet::new)).iterator();
 				while (ontIter.hasNext()) {
 					OWLOntology currentOnt = ontIter.next();
 					if (currentOnt.getOntologyID().getDefaultDocumentIRI().isPresent())
@@ -321,9 +327,9 @@ public class SimpleOWLAPIFactory {
 		System.out.println();
 		System.out.println("List of ontologies in workspace:");
 		System.out.println("--------------------------------");
-		if (ontologyManager.getOntologies().size() > 0) {
+		if (ontologyManager.ontologies().collect(Collectors.toCollection(HashSet::new)).size() > 0) {
 			int idx = 1;
-			for (OWLOntology o : ontologyManager.getOntologies()) {
+			for (OWLOntology o : ontologyManager.ontologies().collect(Collectors.toCollection(HashSet::new))) {
 				if (o.getOntologyID().getDefaultDocumentIRI().isPresent()) {
 					System.out.println(idx + ". " + o.getOntologyID().getDefaultDocumentIRI().get());
 					idx++;
@@ -594,7 +600,8 @@ public class SimpleOWLAPIFactory {
 	}
 
 	/**
-	 * Alias for createDataProperty method. Creates a new data property, adds this data property to the parser's
+	 * Alias for createDataProperty method. Creates a new data property, adds this
+	 * data property to the parser's
 	 * vocabulary and the currently selected ontology, and prints out the data
 	 * property to the console
 	 * 
@@ -784,7 +791,8 @@ public class SimpleOWLAPIFactory {
 	}
 
 	/**
-	 * Alias for createObjectProperties method. Creates multiple object properties, adds them to the parser vocabulary and
+	 * Alias for createObjectProperties method. Creates multiple object properties,
+	 * adds them to the parser vocabulary and
 	 * the currently selected ontology
 	 * 
 	 * @param opropsstr A single space separated list of object properties
@@ -850,11 +858,12 @@ public class SimpleOWLAPIFactory {
 	}
 
 	/**
-	 * Alias for createDataProperties method. Creates multiple data properties, adds them to the parser vocabulary and the
+	 * Alias for createDataProperties method. Creates multiple data properties, adds
+	 * them to the parser vocabulary and the
 	 * currently selected ontology
 	 * 
 	 * @param dpropsstr A single space separated list of data properties
-	 */	
+	 */
 	public void createDProperties(String dpropsstr) {
 		if (selectedOntology == null) {
 			System.out
@@ -883,7 +892,13 @@ public class SimpleOWLAPIFactory {
 		} else {
 			OWLObjectProperty r = dataFactory
 					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-			if (selectedOntology.getSignature().contains(r)) {
+
+			Stream<OWLAxiom> ontAxioms = selectedOntology.axioms();
+			Set<OWLEntity> ontEntities = ontAxioms
+					.<OWLEntity>flatMap(ax -> ax.signature())
+					.collect(Collectors.toCollection(HashSet::new));
+
+			if (ontEntities.contains(r)) {
 				OWLTransitiveObjectPropertyAxiom t = dataFactory.getOWLTransitiveObjectPropertyAxiom(r,
 						new HashSet<OWLAnnotation>());
 				ontologyManager.addAxiom(selectedOntology, t);
@@ -910,7 +925,14 @@ public class SimpleOWLAPIFactory {
 		} else {
 			OWLObjectProperty r = dataFactory
 					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-			if (selectedOntology.getSignature().contains(r)) {
+
+			Stream<OWLAxiom> ontAxioms = selectedOntology.axioms();
+			Set<OWLEntity> ontEntities = ontAxioms
+					.<OWLEntity>flatMap(ax -> ax.signature())
+					.collect(Collectors.toCollection(HashSet::new));
+
+			if (ontEntities.contains(r)) {
+
 				OWLSymmetricObjectPropertyAxiom s = dataFactory.getOWLSymmetricObjectPropertyAxiom(r,
 						new HashSet<OWLAnnotation>());
 				ontologyManager.addAxiom(selectedOntology, s);
@@ -937,7 +959,13 @@ public class SimpleOWLAPIFactory {
 		} else {
 			OWLObjectProperty r = dataFactory
 					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-			if (selectedOntology.getSignature().contains(r)) {
+
+			Stream<OWLAxiom> ontAxioms = selectedOntology.axioms();
+			Set<OWLEntity> ontEntities = ontAxioms
+					.<OWLEntity>flatMap(ax -> ax.signature())
+					.collect(Collectors.toCollection(HashSet::new));
+
+			if (ontEntities.contains(r)) {
 				OWLReflexiveObjectPropertyAxiom re = dataFactory.getOWLReflexiveObjectPropertyAxiom(r,
 						new HashSet<OWLAnnotation>());
 				ontologyManager.addAxiom(selectedOntology, re);
@@ -964,7 +992,14 @@ public class SimpleOWLAPIFactory {
 		} else {
 			OWLObjectProperty r = dataFactory
 					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-			if (selectedOntology.getSignature().contains(r)) {
+
+			Stream<OWLAxiom> ontAxioms = selectedOntology.axioms();
+			Set<OWLEntity> ontEntities = ontAxioms
+					.<OWLEntity>flatMap(ax -> ax.signature())
+					.collect(Collectors.toCollection(HashSet::new));
+
+			if (ontEntities.contains(r)) {
+
 				OWLIrreflexiveObjectPropertyAxiom irr = dataFactory.getOWLIrreflexiveObjectPropertyAxiom(r,
 						new HashSet<OWLAnnotation>());
 				ontologyManager.addAxiom(selectedOntology, irr);
@@ -991,7 +1026,14 @@ public class SimpleOWLAPIFactory {
 		} else {
 			OWLObjectProperty r = dataFactory
 					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-			if (selectedOntology.getSignature().contains(r)) {
+
+			Stream<OWLAxiom> ontAxioms = selectedOntology.axioms();
+			Set<OWLEntity> ontEntities = ontAxioms
+					.<OWLEntity>flatMap(ax -> ax.signature())
+					.collect(Collectors.toCollection(HashSet::new));
+
+			if (ontEntities.contains(r)) {
+
 				OWLAsymmetricObjectPropertyAxiom a = dataFactory.getOWLAsymmetricObjectPropertyAxiom(r,
 						new HashSet<OWLAnnotation>());
 				ontologyManager.addAxiom(selectedOntology, a);
@@ -1067,8 +1109,7 @@ public class SimpleOWLAPIFactory {
 	 *         assumption)
 	 */
 	public OWLAxiom allIndividualsDifferent() {
-		Set<OWLNamedIndividual> inds = new HashSet<OWLNamedIndividual>();
-		inds = selectedOntology.getIndividualsInSignature();// .individualsInSignature(Imports.EXCLUDED).forEach(c->inds.add(c));
+		Set<OWLNamedIndividual> inds = selectedOntology.individualsInSignature().collect(Collectors.toCollection(HashSet::new));
 
 		if (inds.size() < 2) {
 			System.out.println("Error: requires more than 1 individual name in the ontology.");
@@ -1129,10 +1170,10 @@ public class SimpleOWLAPIFactory {
 			System.out.print("-");
 		System.out.println();
 
-		Set<OWLEntity> signature = selectedOntology.getSignature();
-		Set<OWLAxiom> rbox = selectedOntology.getRBoxAxioms(Imports.EXCLUDED);
-		Set<OWLAxiom> tbox = selectedOntology.getTBoxAxioms(Imports.EXCLUDED);
-		Set<OWLAxiom> abox = selectedOntology.getABoxAxioms(Imports.EXCLUDED);
+		Set<OWLEntity> signature = selectedOntology.signature().collect(Collectors.toCollection(HashSet::new));
+		Set<OWLAxiom> rbox = selectedOntology.rboxAxioms(Imports.EXCLUDED).collect(Collectors.toCollection(HashSet::new));
+		Set<OWLAxiom> tbox = selectedOntology.tboxAxioms(Imports.EXCLUDED).collect(Collectors.toCollection(HashSet::new));
+		Set<OWLAxiom> abox = selectedOntology.aboxAxioms(Imports.EXCLUDED).collect(Collectors.toCollection(HashSet::new));
 
 		Set<OWLEntity> clses = new HashSet<OWLEntity>();
 		Set<OWLEntity> oprops = new HashSet<OWLEntity>();
@@ -1254,25 +1295,25 @@ public class SimpleOWLAPIFactory {
 		// Number of axioms and constructs in ontology
 		System.out.println("Number of axioms: " + selectedOntology.getAxiomCount());
 		System.out.println("Number of logical axioms: " + selectedOntology.getLogicalAxiomCount());
-		System.out.println("Number of classes: " + selectedOntology.getClassesInSignature(Imports.EXCLUDED).size());
+		System.out.println("Number of classes: " + selectedOntology.classesInSignature(Imports.EXCLUDED).count());
 		System.out.println("Number of object properties: "
-				+ selectedOntology.getObjectPropertiesInSignature(Imports.EXCLUDED).size());
+				+ selectedOntology.objectPropertiesInSignature(Imports.EXCLUDED).count());
 		System.out.println(
-				"Number of data properties: " + selectedOntology.getDataPropertiesInSignature(Imports.EXCLUDED).size());
+				"Number of data properties: " + selectedOntology.dataPropertiesInSignature(Imports.EXCLUDED).count());
 		System.out.println(
-				"Number of individuals: " + selectedOntology.getIndividualsInSignature(Imports.EXCLUDED).size());
+				"Number of individuals: " + selectedOntology.individualsInSignature(Imports.EXCLUDED).count());
 		// Number of axioms of a specific type in ontology
-		System.out.println("Number of SubClassOf axioms: " + selectedOntology.getAxioms(AxiomType.SUBCLASS_OF).size());
+		System.out.println("Number of SubClassOf axioms: " + selectedOntology.axioms(AxiomType.SUBCLASS_OF).count());
 		System.out.println("Number of EquivalentClasses axioms: "
-				+ selectedOntology.getAxioms(AxiomType.EQUIVALENT_CLASSES).size());
+				+ selectedOntology.axioms(AxiomType.EQUIVALENT_CLASSES).count());
 		System.out.println(
-				"Number of DisjointClasses axioms: " + selectedOntology.getAxioms(AxiomType.DISJOINT_CLASSES).size());
+				"Number of DisjointClasses axioms: " + selectedOntology.axioms(AxiomType.DISJOINT_CLASSES).count());
 		System.out
-				.println("Number of Class assertions: " + selectedOntology.getAxioms(AxiomType.CLASS_ASSERTION).size());
+				.println("Number of Class assertions: " + selectedOntology.axioms(AxiomType.CLASS_ASSERTION).count());
 		System.out.println("Number of Object property assertions: "
-				+ selectedOntology.getAxioms(AxiomType.OBJECT_PROPERTY_ASSERTION).size());
+				+ selectedOntology.axioms(AxiomType.OBJECT_PROPERTY_ASSERTION).count());
 		System.out.println("Number of Data property assertions: "
-				+ selectedOntology.getAxioms(AxiomType.DATA_PROPERTY_ASSERTION).size());
+				+ selectedOntology.axioms(AxiomType.DATA_PROPERTY_ASSERTION).count());
 	}
 
 	/**
@@ -1284,7 +1325,7 @@ public class SimpleOWLAPIFactory {
 		if (selectedOntology != null) {
 			OWLClass c = dataFactory.getOWLClass(IRI.create(selectedOntologyIRI.toString() + classname));
 			OWLDeclarationAxiomImpl a = new OWLDeclarationAxiomImpl(c, new HashSet<OWLAnnotation>());
-			ontologyManager.removeAxiom(selectedOntology, a);
+			selectedOntology.removeAxiom(a);
 		} else {
 			System.out.println("OWLAPI-Lite ERROR: There is no ontology to remove classes from!");
 		}
@@ -1323,14 +1364,15 @@ public class SimpleOWLAPIFactory {
 			OWLObjectProperty r = dataFactory
 					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
 			OWLDeclarationAxiomImpl a = new OWLDeclarationAxiomImpl(r, new HashSet<OWLAnnotation>());
-			ontologyManager.removeAxiom(selectedOntology, a);
+			selectedOntology.removeAxiom(a);
 		} else {
 			System.out.println("OWLAPI-Lite ERROR: there is no selected ontology to property from!");
 		}
 	}
 
 	/**
-	 * Alias for removeObjectProperty method. Removes an object property from the parser vocabulary and currently selected
+	 * Alias for removeObjectProperty method. Removes an object property from the
+	 * parser vocabulary and currently selected
 	 * ontology
 	 * 
 	 * @param opropname A string representation of the object property to remove
@@ -1340,7 +1382,7 @@ public class SimpleOWLAPIFactory {
 			OWLObjectProperty r = dataFactory
 					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
 			OWLDeclarationAxiomImpl a = new OWLDeclarationAxiomImpl(r, new HashSet<OWLAnnotation>());
-			ontologyManager.removeAxiom(selectedOntology, a);
+			selectedOntology.removeAxiom(a);
 		} else {
 			System.out.println("OWLAPI-Lite ERROR: there is no selected ontology to property from!");
 		}
@@ -1356,14 +1398,15 @@ public class SimpleOWLAPIFactory {
 		if (selectedOntology != null) {
 			OWLDataProperty r = dataFactory.getOWLDataProperty(IRI.create(selectedOntologyIRI.toString() + dpropname));
 			OWLDeclarationAxiomImpl a = new OWLDeclarationAxiomImpl(r, new HashSet<OWLAnnotation>());
-			ontologyManager.removeAxiom(selectedOntology, a);
+			selectedOntology.removeAxiom(a);
 		} else {
 			System.out.println("OWLAPI-Lite ERROR: there is no selected ontology to remove property from!");
 		}
 	}
 
 	/**
-	 * Alias for removeDataProperty method. Removes a data property from the parser vocabulary and currently selected
+	 * Alias for removeDataProperty method. Removes a data property from the parser
+	 * vocabulary and currently selected
 	 * ontology
 	 * 
 	 * @param dpropname A string representation of the data property to remove
@@ -1372,7 +1415,7 @@ public class SimpleOWLAPIFactory {
 		if (selectedOntology != null) {
 			OWLDataProperty r = dataFactory.getOWLDataProperty(IRI.create(selectedOntologyIRI.toString() + dpropname));
 			OWLDeclarationAxiomImpl a = new OWLDeclarationAxiomImpl(r, new HashSet<OWLAnnotation>());
-			ontologyManager.removeAxiom(selectedOntology, a);
+			selectedOntology.removeAxiom(a);
 		} else {
 			System.out.println("OWLAPI-Lite ERROR: there is no selected ontology to remove property from!");
 		}
@@ -1402,7 +1445,8 @@ public class SimpleOWLAPIFactory {
 	}
 
 	/**
-	 * Alias for removeObjectProperties method. Removes multiple object properties from the parser vocabulary and currently
+	 * Alias for removeObjectProperties method. Removes multiple object properties
+	 * from the parser vocabulary and currently
 	 * selected ontology
 	 * 
 	 * @param opropnames A single space separated list of object properties to
@@ -1448,7 +1492,8 @@ public class SimpleOWLAPIFactory {
 	}
 
 	/**
-	 * Alias for removeDataProperties method. Removes multiple data properties from the parser vocabulary and currently
+	 * Alias for removeDataProperties method. Removes multiple data properties from
+	 * the parser vocabulary and currently
 	 * selected ontology
 	 * 
 	 * @param dpropnames A single space separated list of data properties to remove
@@ -1483,7 +1528,7 @@ public class SimpleOWLAPIFactory {
 			OWLNamedIndividual i = dataFactory
 					.getOWLNamedIndividual(IRI.create(selectedOntologyIRI.toString() + individualname));
 			OWLDeclarationAxiomImpl a = new OWLDeclarationAxiomImpl(i, new HashSet<OWLAnnotation>());
-			ontologyManager.removeAxiom(selectedOntology, a);
+			selectedOntology.removeAxiom(a);
 		} else {
 			System.out.println("OWLAPI-Lite ERROR: There is no ontology to remove individuals from!");
 		}
@@ -1528,7 +1573,7 @@ public class SimpleOWLAPIFactory {
 		}
 
 		if (axiom != null)
-			ontologyManager.removeAxiom(selectedOntology, axiom);
+			selectedOntology.removeAxiom(axiom);
 	}
 
 	/**
@@ -1538,7 +1583,7 @@ public class SimpleOWLAPIFactory {
 	 */
 	public void removeAxiom(OWLAxiom a) {
 		if (selectedOntology != null) {
-			ontologyManager.removeAxiom(selectedOntology, a);
+			selectedOntology.removeAxiom(a);
 		} else {
 			System.out.println("OWLAPI-Lite ERROR: there is no selected ontology to remove axiom from!");
 		}
@@ -1551,7 +1596,7 @@ public class SimpleOWLAPIFactory {
 	 */
 	public void removeAxioms(Set<OWLAxiom> a) {
 		if (selectedOntology != null) {
-			ontologyManager.removeAxioms(selectedOntology, a);
+			selectedOntology.removeAxioms(a);
 		} else {
 			System.out.println("OWLAPI-Lite ERROR: there is no selected ontology to remove axioms from!");
 		}
@@ -1563,7 +1608,7 @@ public class SimpleOWLAPIFactory {
 	public void resetOntology() {
 		if (selectedOntology != null) {
 			System.out.println(selectedOntology.getOntologyID().getOntologyIRI().get().toString());
-			ontologyManager.removeAxioms(selectedOntology, selectedOntology.getAxioms());
+			selectedOntology.removeAxioms(selectedOntology.axioms());
 			selectedOntology = null;
 		} else {
 			System.out.println("OWLAPI-Lite ERROR: no ontologies to reset in workspace!");
@@ -1595,14 +1640,16 @@ public class SimpleOWLAPIFactory {
 					+ " could not be found, it could not be parsed, or it already exists in your workspace.");
 		}
 		// } catch (OWLOntologyInputSourceException ooise) {
-		// 	System.out.println("OWLAPI-Lite LOADING ERROR: either the ontology file " + filepath
-		// 			+ " could not be found, it could not be parsed, or it already exists in your workspace.");
+		// System.out.println("OWLAPI-Lite LOADING ERROR: either the ontology file " +
+		// filepath
+		// + " could not be found, it could not be parsed, or it already exists in your
+		// workspace.");
 		// }
 
 		if (ontology != null) {
 			// add new ontology signature to parser vocabulary so we can use Manchester OWL
 			// strings to manipulate and query it
-			for (OWLEntity e : ontology.getSignature()) {
+			for (OWLEntity e : ontology.signature().collect(Collectors.toCollection(HashSet::new))) {
 				parser.addVocab(e);
 			}
 
@@ -1641,7 +1688,7 @@ public class SimpleOWLAPIFactory {
 		if (ontology != null) {
 			// add new ontology signature to parser vocabulary so we can use Manchester OWL
 			// strings to manipulate and query it
-			for (OWLEntity e : ontology.getSignature()) {
+			for (OWLEntity e : ontology.signature().collect(Collectors.toCollection(HashSet::new))) {
 				parser.addVocab(e);
 			}
 
@@ -1714,8 +1761,8 @@ public class SimpleOWLAPIFactory {
 					+ "> cannot be removed because it does not exist in workspace!");
 		}
 
-		if (ontologyManager.getOntologies().size() > 0) {
-			Iterator<OWLOntology> ontIter = ontologyManager.getOntologies().iterator();
+		if (ontologyManager.ontologies().count() > 0) {
+			Iterator<OWLOntology> ontIter = ontologyManager.ontologies().iterator();
 			while (ontIter.hasNext()) {
 				OWLOntology currentOnt = ontIter.next();
 				if (currentOnt.getOntologyID().getDefaultDocumentIRI().isPresent())
@@ -1744,8 +1791,8 @@ public class SimpleOWLAPIFactory {
 							+ "> cannot be removed because it does not exist in workspace!");
 		}
 
-		if (ontologyManager.getOntologies().size() > 0) {
-			Iterator<OWLOntology> ontIter = ontologyManager.getOntologies().iterator();
+		if (ontologyManager.ontologies().count() > 0) {
+			Iterator<OWLOntology> ontIter = ontologyManager.ontologies().iterator();
 			while (ontIter.hasNext()) {
 				OWLOntology currentOnt = ontIter.next();
 				if (currentOnt.getOntologyID().getDefaultDocumentIRI().isPresent())
@@ -1771,8 +1818,8 @@ public class SimpleOWLAPIFactory {
 			System.out.println("OWLAPI-Lite ERROR: there is no ontology currently selected - cannot remove one!");
 		}
 
-		if (ontologyManager.getOntologies().size() > 0) {
-			Iterator<OWLOntology> ontIter = ontologyManager.getOntologies().iterator();
+		if (ontologyManager.ontologies().count() > 0) {
+			Iterator<OWLOntology> ontIter = ontologyManager.ontologies().iterator();
 			while (ontIter.hasNext()) {
 				OWLOntology currentOnt = ontIter.next();
 				if (currentOnt.getOntologyID().getDefaultDocumentIRI().isPresent())
