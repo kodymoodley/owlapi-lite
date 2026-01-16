@@ -3,7 +3,7 @@ name: Create Release
 on:
   workflow_dispatch:
     inputs:
-      version: '1.0.0'
+      version:
         description: ''
         required: true
         type: string
