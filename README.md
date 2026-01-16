@@ -1,6 +1,6 @@
 # OWLAPI-Lite
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
-[![Maven Central](https://img.shields.io/maven-central/v/net.sourceforge.simpleowlapi/simpleowlapi-lib.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.sourceforge.simpleowlapi%22%20AND%20a:%22simpleowlapi-lib%22)
+[![Maven Central](https://img.shields.io/maven-central/v/net.sourceforge.OWLAPILite/OWLAPILite-lib.svg?label=Maven%20Central)](https://search.maven.org/search?q=g:%22net.sourceforge.OWLAPILite%22%20AND%20a:%22OWLAPILite-lib%22)
 
 OWLAPI-Lite is a light-weight wrapper for the [OWLAPI](https://github.com/owlcs/owlapi) that enables faster development of [OWL](https://www.w3.org/TR/owl2-overview/) ontologies with more concise code using the power of the [Manchester OWL Syntax](https://www.w3.org/TR/owl2-manchester-syntax/) and related parsers. The wrapper does not make use of all the features of the more powerful OWLAPI. Rather, it is designed specifically for rapid and concise ontology construction in workflows involving semantic data engineering. It can also be used in contexts such as educational and demonstration settings in courses, workshops and tutorials. In particular, the library can also be used in [Jupyter notebooks](https://jupyter.org/) using a Java kernel such as the [IJava kernel](https://github.com/SpencerPark/IJava).
 
@@ -49,8 +49,8 @@ For more information on how to use OWLAPI-Lite, see the [Javadocs](https://kodym
 import io.github.kodymoodley.owlapilite.*;
 import org.semanticweb.owlapi.model.*;
 
-// create a new SimpleOWLAPIFactory instance which allows the construction and manipulation of OWL ontologies (default OWL reasoner is JFACT)
-SimpleOWLAPIFactory s = new SimpleOWLAPIFactory(); 
+// create a new OWLAPILiteFactory instance which allows the construction and manipulation of OWL ontologies (default OWL reasoner is JFACT)
+OWLAPILiteFactory s = new OWLAPILiteFactory(); 
 // create a new OWL ontology by specifying an IRI string and set it to the currently selected (active) ontology
 s.createOntology("http://com.kodymoodley/ontologies/2020/testontology#");
 // create multiple class names (each separated by a space) and add them to the currently selected ontology
@@ -150,7 +150,7 @@ s.removeAxiom("Penguin subClassOf eats some Fish");
 ##### Examples: reasoning
 
 ```java
-SimpleOWLAPIFactory s = new SimpleOWLAPIFactory();
+OWLAPILiteFactory s = new OWLAPILiteFactory();
 
 ...
 
