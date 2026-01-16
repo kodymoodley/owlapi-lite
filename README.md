@@ -10,7 +10,7 @@ OWLAPI-Lite is a light-weight wrapper for the [OWLAPI](https://github.com/owlcs/
 
 1. [Jupyter notebooks](https://jupyter.org/)
 2. [IJava](https://github.com/SpencerPark/IJava) Jupyter kernel
-3. [Java JDK 1.9+](https://jdk.java.net/) linked to your IJava kernel
+3. [Java JDK 25+](https://jdk.java.net/) linked to your IJava kernel
 
 ##### Importing
 
