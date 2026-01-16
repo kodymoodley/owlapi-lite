@@ -240,6 +240,17 @@ public class SimpleOWLAPIFactory {
 	}
 
 	/**
+	 * Sets the currently selected (active) ontology
+	 */
+	private void setOnt() {
+		selectedOntologyIRI = selectedOntology.getOntologyID().getOntologyIRI().get();
+		System.out.println(
+				"Selected ontology is: " + selectedOntology.getOntologyID().getOntologyIRI().get().toString());
+		owlReasoner = null;
+		owlReasoner = new SimpleOWLReasoner(reasonerFactory, selectedOntology, parser, selectedReasoner);
+	}
+
+	/**
 	 * Sets the currently selected (active) ontology to be the one denoted by the
 	 * input IRI string
 	 * 
@@ -249,11 +260,7 @@ public class SimpleOWLAPIFactory {
 		System.out.println();
 		selectedOntology = ontologyManager.getOntology(IRI.create(iriStr));
 		if (selectedOntology != null) {
-			System.out.println(
-					"Selected ontology is: " + selectedOntology.getOntologyID().getOntologyIRI().get().toString());
-			selectedOntologyIRI = selectedOntology.getOntologyID().getDefaultDocumentIRI().get();
-			owlReasoner = null;
-			owlReasoner = new SimpleOWLReasoner(reasonerFactory, selectedOntology, parser, selectedReasoner);
+			setOnt();
 		} else {
 			System.out.println("OWLAPI-Lite ERROR: Ontology <" + iriStr + "> does not exist!");
 		}
@@ -269,11 +276,7 @@ public class SimpleOWLAPIFactory {
 		System.out.println();
 		if (ontology != null) {
 			selectedOntology = ontology;
-			selectedOntologyIRI = selectedOntology.getOntologyID().getOntologyIRI().get();
-			System.out.println(
-					"Selected ontology is: " + selectedOntology.getOntologyID().getOntologyIRI().get().toString());
-			owlReasoner = null;
-			owlReasoner = new SimpleOWLReasoner(reasonerFactory, selectedOntology, parser, selectedReasoner);
+			setOnt();
 		} else {
 			System.out.println("OWLAPI-Lite ERROR: Invalid or non-existent ontology!");
 		}
@@ -496,78 +499,7 @@ public class SimpleOWLAPIFactory {
 	 *                  not making it symmetric, 2 for making it asymmetric
 	 */
 	public void createOProperty(String opropname, int trans, int ref, int sym) {
-		if (trans == 1) {
-			OWLObjectProperty r = dataFactory
-					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-			parser.addVocab(r);
-			OWLTransitiveObjectPropertyAxiom t = dataFactory.getOWLTransitiveObjectPropertyAxiom(r,
-					new HashSet<OWLAnnotation>());
-			ontologyManager.addAxiom(selectedOntology, t);
-			if (fullIRIRendering)
-				System.out.println("ObjectProperty: " + r);
-			else
-				System.out.println("ObjectProperty: " + renderer.render(r));
-		}
-		if (ref == 1) {
-			OWLObjectProperty r = dataFactory
-					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-			parser.addVocab(r);
-			OWLReflexiveObjectPropertyAxiom t = dataFactory.getOWLReflexiveObjectPropertyAxiom(r,
-					new HashSet<OWLAnnotation>());
-			ontologyManager.addAxiom(selectedOntology, t);
-			if (fullIRIRendering)
-				System.out.println("ObjectProperty: " + r);
-			else
-				System.out.println("ObjectProperty: " + renderer.render(r));
-		}
-		if (ref == 2) {
-			OWLObjectProperty r = dataFactory
-					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-			parser.addVocab(r);
-			OWLIrreflexiveObjectPropertyAxiom t = dataFactory.getOWLIrreflexiveObjectPropertyAxiom(r,
-					new HashSet<OWLAnnotation>());
-			ontologyManager.addAxiom(selectedOntology, t);
-			if (fullIRIRendering)
-				System.out.println("ObjectProperty: " + r);
-			else
-				System.out.println("ObjectProperty: " + renderer.render(r));
-		}
-		if (sym == 1) {
-			OWLObjectProperty r = dataFactory
-					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-			parser.addVocab(r);
-			OWLSymmetricObjectPropertyAxiom t = dataFactory.getOWLSymmetricObjectPropertyAxiom(r,
-					new HashSet<OWLAnnotation>());
-			ontologyManager.addAxiom(selectedOntology, t);
-			if (fullIRIRendering)
-				System.out.println("ObjectProperty: " + r);
-			else
-				System.out.println("ObjectProperty: " + renderer.render(r));
-		}
-		if (sym == 2) {
-			OWLObjectProperty r = dataFactory
-					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-			parser.addVocab(r);
-			OWLAsymmetricObjectPropertyAxiom t = dataFactory.getOWLAsymmetricObjectPropertyAxiom(r,
-					new HashSet<OWLAnnotation>());
-			ontologyManager.addAxiom(selectedOntology, t);
-			if (fullIRIRendering)
-				System.out.println("ObjectProperty: " + r);
-			else
-				System.out.println("ObjectProperty: " + renderer.render(r));
-		}
-		if ((trans == 0) && (ref == 0) && (sym == 0)) {
-			OWLObjectProperty r = dataFactory
-					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-			parser.addVocab(r);
-			OWLDeclarationAxiomImpl a = new OWLDeclarationAxiomImpl(r, new HashSet<OWLAnnotation>());
-			OWLAxiom role_declaration = a.getAxiomWithoutAnnotations();
-			ontologyManager.addAxiom(selectedOntology, role_declaration);
-			if (fullIRIRendering)
-				System.out.println("ObjectProperty: " + r);
-			else
-				System.out.println("ObjectProperty: " + renderer.render(r));
-		}
+		createObjectProperty(opropname, trans, ref, sym);
 	}
 
 	/**
@@ -601,18 +533,7 @@ public class SimpleOWLAPIFactory {
 	 * @param dpropname A string representation of a data property
 	 */
 	public void createDProperty(String dpropname) {
-		if (selectedOntology == null) {
-			System.out
-					.println("OWLAPI-Lite ERROR: There is no ontology to add properties to! First create an ontology.");
-		} else {
-			OWLDataProperty dprop = dataFactory
-					.getOWLDataProperty(IRI.create(selectedOntologyIRI.toString() + dpropname));
-			parser.addVocab(dprop);
-			if (fullIRIRendering)
-				System.out.println("DataProperty: " + dprop);
-			else
-				System.out.println("DataProperty: " + renderer.render(dprop));
-		}
+		createDataProperty(dpropname);
 	}
 
 	/**
@@ -790,19 +711,7 @@ public class SimpleOWLAPIFactory {
 	 * @param opropsstr A single space separated list of object properties
 	 */
 	public void createOProperties(String opropsstr) {
-		if (selectedOntology == null) {
-			System.out
-					.println("OWLAPI-Lite ERROR: There is no ontology to add properties to! First create an ontology.");
-		} else {
-			String[] oprops = opropsstr.split(" ");
-			if (oprops.length == 0) {
-				System.out.println(
-						"OWLAPI-Lite PARSER ERROR: incorrect syntax for creating object property names. String requires more than 1 token (object property names) each separated by single spaces");
-			} else {
-				for (String o : oprops)
-					createObjectProperty(o);
-			}
-		}
+		createObjectProperties(opropsstr);
 	}
 
 	/**
@@ -857,19 +766,39 @@ public class SimpleOWLAPIFactory {
 	 * @param dpropsstr A single space separated list of data properties
 	 */
 	public void createDProperties(String dpropsstr) {
+		createDataProperties(dpropsstr);
+	}
+
+	/**
+	 * @param axiom An OWLAxiom object
+	 *              rendering
+	 */
+	private void render(OWLAxiom a) {
+		if (fullIRIRendering)
+			System.out.println(a);
+		else
+			System.out.println(renderer.render(a));
+	}
+
+	/**
+	 * Gathers all OWL entities in the currently selected ontology
+	 * 
+	 * @return A set of OWLEntity objects representing all entities in the currently
+	 *         selected ontology
+	 */
+	private Set<OWLEntity> gatherOntEntities() {
+		Set<OWLEntity> ontEntities = null;
 		if (selectedOntology == null) {
 			System.out
 					.println("OWLAPI-Lite ERROR: There is no ontology to add properties to! First create an ontology.");
 		} else {
-			String[] dprops = dpropsstr.split(" ");
-			if (dprops.length == 0) {
-				System.out.println(
-						"OWLAPI-Lite PARSER ERROR: incorrect syntax for creating data property names. String requires more than 1 token (data property names) each separated by single spaces");
-			} else {
-				for (String d : dprops)
-					createDataProperty(d);
-			}
+
+			Stream<OWLAxiom> ontAxioms = selectedOntology.axioms();
+			ontEntities = ontAxioms
+					.<OWLEntity>flatMap(ax -> ax.signature())
+					.collect(Collectors.toCollection(HashSet::new));
 		}
+		return ontEntities;
 	}
 
 	/**
@@ -878,32 +807,20 @@ public class SimpleOWLAPIFactory {
 	 * @param opropname A string representation of an object property
 	 */
 	public void makeTransitive(String opropname) {
-		if (selectedOntology == null) {
-			System.out
-					.println("OWLAPI-Lite ERROR: There is no ontology to add properties to! First create an ontology.");
+		Set<OWLEntity> ontEntities = gatherOntEntities();
+		OWLObjectProperty r = dataFactory
+				.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
+		if (ontEntities.contains(r)) {
+			OWLTransitiveObjectPropertyAxiom t = dataFactory.getOWLTransitiveObjectPropertyAxiom(r,
+					new HashSet<OWLAnnotation>());
+
+			ontologyManager.addAxiom(selectedOntology, t);
+			render(t);
 		} else {
-			OWLObjectProperty r = dataFactory
-					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-
-			Stream<OWLAxiom> ontAxioms = selectedOntology.axioms();
-			Set<OWLEntity> ontEntities = ontAxioms
-					.<OWLEntity>flatMap(ax -> ax.signature())
-					.collect(Collectors.toCollection(HashSet::new));
-
-			if (ontEntities.contains(r)) {
-				OWLTransitiveObjectPropertyAxiom t = dataFactory.getOWLTransitiveObjectPropertyAxiom(r,
-						new HashSet<OWLAnnotation>());
-
-				ontologyManager.addAxiom(selectedOntology, t);
-				if (fullIRIRendering)
-					System.out.println(t);
-				else
-					System.out.println(renderer.render(t));
-			} else {
-				System.out.println(
-						"OWLAPI-Lite ERROR: " + renderer.render(r) + "does not appear in the selected ontology!");
-			}
+			System.out.println(
+					"OWLAPI-Lite ERROR: " + renderer.render(r) + "does not appear in the selected ontology!");
 		}
+
 	}
 
 	/**
@@ -912,32 +829,20 @@ public class SimpleOWLAPIFactory {
 	 * @param opropname A string representation of an object property
 	 */
 	public void makeSymmetric(String opropname) {
-		if (selectedOntology == null) {
-			System.out
-					.println("OWLAPI-Lite ERROR: There is no ontology to add properties to! First create an ontology.");
+		Set<OWLEntity> ontEntities = gatherOntEntities();
+		OWLObjectProperty r = dataFactory
+				.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
+
+		if (ontEntities.contains(r)) {
+			OWLSymmetricObjectPropertyAxiom s = dataFactory.getOWLSymmetricObjectPropertyAxiom(r,
+					new HashSet<OWLAnnotation>());
+			ontologyManager.addAxiom(selectedOntology, s);
+			render(s);
 		} else {
-			OWLObjectProperty r = dataFactory
-					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-
-			Stream<OWLAxiom> ontAxioms = selectedOntology.axioms();
-			Set<OWLEntity> ontEntities = ontAxioms
-					.<OWLEntity>flatMap(ax -> ax.signature())
-					.collect(Collectors.toCollection(HashSet::new));
-
-			if (ontEntities.contains(r)) {
-
-				OWLSymmetricObjectPropertyAxiom s = dataFactory.getOWLSymmetricObjectPropertyAxiom(r,
-						new HashSet<OWLAnnotation>());
-				ontologyManager.addAxiom(selectedOntology, s);
-				if (fullIRIRendering)
-					System.out.println(s);
-				else
-					System.out.println(renderer.render(s));
-			} else {
-				System.out.println(
-						"OWLAPI-Lite ERROR: " + renderer.render(r) + "does not appear in the selected ontology!");
-			}
+			System.out.println(
+					"OWLAPI-Lite ERROR: " + renderer.render(r) + "does not appear in the selected ontology!");
 		}
+
 	}
 
 	/**
@@ -946,31 +851,20 @@ public class SimpleOWLAPIFactory {
 	 * @param opropname A string representation of an object property
 	 */
 	public void makeReflexive(String opropname) {
-		if (selectedOntology == null) {
-			System.out
-					.println("OWLAPI-Lite ERROR: There is no ontology to add properties to! First create an ontology.");
+		Set<OWLEntity> ontEntities = gatherOntEntities();
+		OWLObjectProperty r = dataFactory
+				.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
+
+		if (ontEntities.contains(r)) {
+			OWLReflexiveObjectPropertyAxiom re = dataFactory.getOWLReflexiveObjectPropertyAxiom(r,
+					new HashSet<OWLAnnotation>());
+			ontologyManager.addAxiom(selectedOntology, re);
+			render(re);
 		} else {
-			OWLObjectProperty r = dataFactory
-					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-
-			Stream<OWLAxiom> ontAxioms = selectedOntology.axioms();
-			Set<OWLEntity> ontEntities = ontAxioms
-					.<OWLEntity>flatMap(ax -> ax.signature())
-					.collect(Collectors.toCollection(HashSet::new));
-
-			if (ontEntities.contains(r)) {
-				OWLReflexiveObjectPropertyAxiom re = dataFactory.getOWLReflexiveObjectPropertyAxiom(r,
-						new HashSet<OWLAnnotation>());
-				ontologyManager.addAxiom(selectedOntology, re);
-				if (fullIRIRendering)
-					System.out.println(re);
-				else
-					System.out.println(renderer.render(re));
-			} else {
-				System.out.println(
-						"OWLAPI-Lite ERROR: " + renderer.render(r) + "does not appear in the selected ontology!");
-			}
+			System.out.println(
+					"OWLAPI-Lite ERROR: " + renderer.render(r) + "does not appear in the selected ontology!");
 		}
+
 	}
 
 	/**
@@ -979,31 +873,18 @@ public class SimpleOWLAPIFactory {
 	 * @param opropname A string representation of an object property
 	 */
 	public void makeIRReflexive(String opropname) {
-		if (selectedOntology == null) {
-			System.out
-					.println("OWLAPI-Lite ERROR: There is no ontology to add properties to! First create an ontology.");
+		Set<OWLEntity> ontEntities = gatherOntEntities();
+		OWLObjectProperty r = dataFactory
+				.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
+
+		if (ontEntities.contains(r)) {
+			OWLIrreflexiveObjectPropertyAxiom irr = dataFactory.getOWLIrreflexiveObjectPropertyAxiom(r,
+					new HashSet<OWLAnnotation>());
+			ontologyManager.addAxiom(selectedOntology, irr);
+			render(irr);
 		} else {
-			OWLObjectProperty r = dataFactory
-					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-
-			Stream<OWLAxiom> ontAxioms = selectedOntology.axioms();
-			Set<OWLEntity> ontEntities = ontAxioms
-					.<OWLEntity>flatMap(ax -> ax.signature())
-					.collect(Collectors.toCollection(HashSet::new));
-
-			if (ontEntities.contains(r)) {
-
-				OWLIrreflexiveObjectPropertyAxiom irr = dataFactory.getOWLIrreflexiveObjectPropertyAxiom(r,
-						new HashSet<OWLAnnotation>());
-				ontologyManager.addAxiom(selectedOntology, irr);
-				if (fullIRIRendering)
-					System.out.println(irr);
-				else
-					System.out.println(renderer.render(irr));
-			} else {
-				System.out.println(
-						"OWLAPI-Lite ERROR: " + renderer.render(r) + "does not appear in the selected ontology!");
-			}
+			System.out.println(
+					"OWLAPI-Lite ERROR: " + renderer.render(r) + "does not appear in the selected ontology!");
 		}
 	}
 
@@ -1013,31 +894,18 @@ public class SimpleOWLAPIFactory {
 	 * @param opropname A string representation of an object property
 	 */
 	public void makeAntiSymmetric(String opropname) {
-		if (selectedOntology == null) {
-			System.out
-					.println("OWLAPI-Lite ERROR: There is no ontology to add properties to! First create an ontology.");
+		Set<OWLEntity> ontEntities = gatherOntEntities();
+		OWLObjectProperty r = dataFactory
+				.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
+
+		if (ontEntities.contains(r)) {
+			OWLAsymmetricObjectPropertyAxiom a = dataFactory.getOWLAsymmetricObjectPropertyAxiom(r,
+					new HashSet<OWLAnnotation>());
+			ontologyManager.addAxiom(selectedOntology, a);
+			render(a);
 		} else {
-			OWLObjectProperty r = dataFactory
-					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-
-			Stream<OWLAxiom> ontAxioms = selectedOntology.axioms();
-			Set<OWLEntity> ontEntities = ontAxioms
-					.<OWLEntity>flatMap(ax -> ax.signature())
-					.collect(Collectors.toCollection(HashSet::new));
-
-			if (ontEntities.contains(r)) {
-
-				OWLAsymmetricObjectPropertyAxiom a = dataFactory.getOWLAsymmetricObjectPropertyAxiom(r,
-						new HashSet<OWLAnnotation>());
-				ontologyManager.addAxiom(selectedOntology, a);
-				if (fullIRIRendering)
-					System.out.println(a);
-				else
-					System.out.println(renderer.render(a));
-			} else {
-				System.out.println(
-						"OWLAPI-Lite ERROR: " + renderer.render(r) + "does not appear in the selected ontology!");
-			}
+			System.out.println(
+					"OWLAPI-Lite ERROR: " + renderer.render(r) + "does not appear in the selected ontology!");
 		}
 	}
 
@@ -1074,23 +942,7 @@ public class SimpleOWLAPIFactory {
 	 * @return An OWLAxiom object representing the role assertion axiom in the input
 	 */
 	public OWLAxiom createOPropertyAssertion(String axiomStr) {
-		String[] parts = axiomStr.split(" ");
-		if (parts.length != 3) {
-			System.out.println(
-					"Parser error: incorrect syntax for role assertion. requires exactly three tokens separated by single spaces");
-			return null;
-		} else {
-			OWLObjectPropertyAssertionAxiom a = dataFactory.getOWLObjectPropertyAssertionAxiom(
-					dataFactory.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + parts[1])),
-					dataFactory.getOWLNamedIndividual(IRI.create(selectedOntologyIRI.toString() + parts[0])),
-					dataFactory.getOWLNamedIndividual(IRI.create(selectedOntologyIRI.toString() + parts[2])));
-			ontologyManager.addAxiom(selectedOntology, a);
-			if (fullIRIRendering)
-				System.out.println("ObjectPropertyAssertion: " + a);
-			else
-				System.out.println("ObjectPropertyAssertion: " + renderer.render(a));
-			return a;
-		}
+		return createObjectPropertyAssertion(axiomStr);
 	}
 
 	/**
@@ -1111,10 +963,7 @@ public class SimpleOWLAPIFactory {
 		} else {
 			OWLAxiom a = dataFactory.getOWLDifferentIndividualsAxiom(inds, new HashSet<OWLAnnotation>());
 			ontologyManager.addAxiom(selectedOntology, a);
-			if (fullIRIRendering)
-				System.out.println(a);
-			else
-				System.out.println(renderer.render(a));
+			render(a);
 			return a;
 		}
 	}
@@ -1144,10 +993,7 @@ public class SimpleOWLAPIFactory {
 		} else {
 			OWLAxiom a = dataFactory.getOWLDifferentIndividualsAxiom(inds, new HashSet<OWLAnnotation>());
 			ontologyManager.addAxiom(selectedOntology, a);
-			if (fullIRIRendering)
-				System.out.println(a);
-			else
-				System.out.println(renderer.render(a));
+			render(a);
 			return a;
 		}
 	}
@@ -1272,10 +1118,7 @@ public class SimpleOWLAPIFactory {
 	 * @param axiom OWLAxiom object to print to console
 	 */
 	public void print(OWLAxiom axiom) {
-		if (fullIRIRendering)
-			System.out.println(axiom);
-		else
-			System.out.println(renderer.render(axiom));
+		render(axiom);
 	}
 
 	/**
@@ -1375,14 +1218,7 @@ public class SimpleOWLAPIFactory {
 	 * @param opropname A string representation of the object property to remove
 	 */
 	public void removeOProperty(String opropname) {
-		if (selectedOntology != null) {
-			OWLObjectProperty r = dataFactory
-					.getOWLObjectProperty(IRI.create(selectedOntologyIRI.toString() + opropname));
-			OWLDeclarationAxiomImpl a = new OWLDeclarationAxiomImpl(r, new HashSet<OWLAnnotation>());
-			selectedOntology.removeAxiom(a);
-		} else {
-			System.out.println("OWLAPI-Lite ERROR: there is no selected ontology to property from!");
-		}
+		removeObjectProperty(opropname);
 	}
 
 	/**
@@ -1409,13 +1245,7 @@ public class SimpleOWLAPIFactory {
 	 * @param dpropname A string representation of the data property to remove
 	 */
 	public void removeDProperty(String dpropname) {
-		if (selectedOntology != null) {
-			OWLDataProperty r = dataFactory.getOWLDataProperty(IRI.create(selectedOntologyIRI.toString() + dpropname));
-			OWLDeclarationAxiomImpl a = new OWLDeclarationAxiomImpl(r, new HashSet<OWLAnnotation>());
-			selectedOntology.removeAxiom(a);
-		} else {
-			System.out.println("OWLAPI-Lite ERROR: there is no selected ontology to remove property from!");
-		}
+		removeDataProperty(dpropname);
 	}
 
 	/**
@@ -1451,18 +1281,7 @@ public class SimpleOWLAPIFactory {
 	 *                   teachesCourse"
 	 */
 	public void removeOProperties(String opropnames) {
-		if (selectedOntology == null) {
-			System.out.println("OWLAPI-Lite ERROR: There is no ontology to remove properties from!");
-		} else {
-			String[] oprops = opropnames.split(" ");
-			if (oprops.length == 0) {
-				System.out.println(
-						"OWLAPI-Lite PARSER ERROR: incorrect syntax for removing properties. String requires more than 1 token (property names) each separated by single spaces");
-			} else {
-				for (String o : oprops)
-					removeOProperty(o);
-			}
-		}
+		removeObjectProperties(opropnames);
 	}
 
 	/**
@@ -1498,18 +1317,7 @@ public class SimpleOWLAPIFactory {
 	 *                   hasConcentration"
 	 */
 	public void removeDProperties(String dpropnames) {
-		if (selectedOntology == null) {
-			System.out.println("OWLAPI-Lite ERROR: There is no ontology to remove properties from!");
-		} else {
-			String[] dprops = dpropnames.split(" ");
-			if (dprops.length == 0) {
-				System.out.println(
-						"OWLAPI-Lite PARSER ERROR: incorrect syntax for removing properties. String requires more than 1 token (property names) each separated by single spaces");
-			} else {
-				for (String d : dprops)
-					removeDProperty(d);
-			}
-		}
+		removeDataProperties(dpropnames);
 	}
 
 	/**
@@ -1604,12 +1412,26 @@ public class SimpleOWLAPIFactory {
 	 */
 	public void resetOntology() {
 		if (selectedOntology != null) {
-			System.out.println(selectedOntology.getOntologyID().getOntologyIRI().get().toString());
+			System.out.println(
+					"Reset selected ontology: " + selectedOntology.getOntologyID().getOntologyIRI().get().toString());
 			selectedOntology.removeAxioms(selectedOntology.axioms());
-			// selectedOntology = null;
+
 		} else {
 			System.out.println("OWLAPI-Lite ERROR: no ontologies to reset in workspace!");
 		}
+	}
+
+	private void updateParserVocab(OWLOntology ontology) {
+		// add new ontology signature to parser vocabulary so we can use Manchester OWL
+		// strings to manipulate and query it
+		for (OWLEntity e : ontology.signature().collect(Collectors.toCollection(HashSet::new))) {
+			parser.addVocab(e);
+		}
+
+		selectedOntology = ontology;
+		selectedOntologyIRI = ontology.getOntologyID().getDefaultDocumentIRI().get();
+		owlReasoner = null;
+		owlReasoner = new SimpleOWLReasoner(reasonerFactory, selectedOntology, parser, selectedReasoner);
 	}
 
 	/**
@@ -1636,24 +1458,9 @@ public class SimpleOWLAPIFactory {
 			System.out.println("OWLAPI-Lite LOADING ERROR: either the ontology file " + filepath
 					+ " could not be found, it could not be parsed, or it already exists in your workspace.");
 		}
-		// } catch (OWLOntologyInputSourceException ooise) {
-		// System.out.println("OWLAPI-Lite LOADING ERROR: either the ontology file " +
-		// filepath
-		// + " could not be found, it could not be parsed, or it already exists in your
-		// workspace.");
-		// }
 
 		if (ontology != null) {
-			// add new ontology signature to parser vocabulary so we can use Manchester OWL
-			// strings to manipulate and query it
-			for (OWLEntity e : ontology.signature().collect(Collectors.toCollection(HashSet::new))) {
-				parser.addVocab(e);
-			}
-
-			selectedOntology = ontology;
-			selectedOntologyIRI = ontology.getOntologyID().getDefaultDocumentIRI().get();
-			owlReasoner = null;
-			owlReasoner = new SimpleOWLReasoner(reasonerFactory, selectedOntology, parser, selectedReasoner);
+			updateParserVocab(ontology);
 		}
 		return ontology;
 	}
@@ -1683,16 +1490,7 @@ public class SimpleOWLAPIFactory {
 		}
 
 		if (ontology != null) {
-			// add new ontology signature to parser vocabulary so we can use Manchester OWL
-			// strings to manipulate and query it
-			for (OWLEntity e : ontology.signature().collect(Collectors.toCollection(HashSet::new))) {
-				parser.addVocab(e);
-			}
-
-			selectedOntology = ontology;
-			selectedOntologyIRI = ontology.getOntologyID().getDefaultDocumentIRI().get();
-			owlReasoner = null;
-			owlReasoner = new SimpleOWLReasoner(reasonerFactory, selectedOntology, parser, selectedReasoner);
+			updateParserVocab(ontology);
 		}
 		return ontology;
 	}
