@@ -1,6 +1,8 @@
+.DS_Store
 .settings/
 target/
 .classpath
 .project
 .git/
 *.owl
+.vscode/

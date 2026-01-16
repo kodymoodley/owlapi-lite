@@ -14,11 +14,11 @@ OWLAPI-Lite is a light-weight wrapper for the [OWLAPI](https://github.com/owlcs/
 
 ##### Importing
 
-When using OWLAPI-Lite with [Jupyter notebooks](https://jupyter.org/) using the [IJava kernel](https://github.com/SpencerPark/IJava), importing the library using ``%maven`` and ``%%loadFromPOM`` [magics](https://github.com/SpencerPark/IJava/blob/master/docs/magics.md) is known to cause problems due to [.ivy2](https://ant.apache.org/ivy/history/2.5.0/settings/caches.html) caching conflicts. The solution is to download the .jar file of OWLAPI-Lite **with packaged dependencies** from the [releases](https://github.com/kodymoodley/simpleowlapi/releases/) section and import this file manually into your IJava notebook by running the ``%jars path/to/jar/file/simpleowlapi-lib-${version}.jar`` command from a single dedicated cell in the notebook.
+When using OWLAPI-Lite with [Jupyter notebooks](https://jupyter.org/) using the [IJava kernel](https://github.com/SpencerPark/IJava), importing the library using ``%maven`` and ``%%loadFromPOM`` [magics](https://github.com/SpencerPark/IJava/blob/master/docs/magics.md) is known to cause problems due to [.ivy2](https://ant.apache.org/ivy/history/2.5.0/settings/caches.html) caching conflicts. The solution is to download the .jar file of OWLAPI-Lite **with packaged dependencies** from the [releases](https://github.com/kodymoodley/owlapi-lite/releases/) section and import this file manually into your IJava notebook by running the ``%jars path/to/jar/file/owlapi-lite-${version}.jar`` command from a single dedicated cell in the notebook.
 
 ##### Dependencies
 
-The OWLAPI-Lite release for Jupyter notebooks is bundled into one .jar file for convenience. This file includes the following dependencies (see [pom.xml](https://github.com/kodymoodley/simpleowlapi/blob/master/pom.xml) for specific versions):
+The OWLAPI-Lite release for Jupyter notebooks is bundled into one .jar file for convenience. This file includes the following dependencies (see [pom.xml](https://github.com/kodymoodley/owlapi-lite/blob/master/pom.xml) for specific versions):
 
 1. The [OWL API](https://github.com/owlcs/owlapi) released under both the [GNU Lesser General Public License (LGPL)](https://www.gnu.org/licenses/lgpl-3.0.html) and the [Apache 2.0 License](https://www.apache.org/licenses/LICENSE-2.0).
 2. The [HermiT](http://www.hermit-reasoner.com/) OWL reasoner released under the [GNU Lesser General Public License (LGPL)](https://www.gnu.org/licenses/lgpl-3.0.html).
@@ -33,20 +33,20 @@ Include the following dependency in your pom.xml
 
 ```xml
 <dependency>
-    <groupId>net.sourceforge.simpleowlapi</groupId>
-    <artifactId>simpleowlapi-lib</artifactId>
-    <version>1.2.1</version>
+	<groupId>io.github.kodymoodley</groupId>
+	<artifactId>owlapi-lite</artifactId>
+	<version>1.0.0</version>
 </dependency>
 ```
 
 ### Examples and documentation
 
-For more information on how to use OWLAPI-Lite, see the [Javadocs](https://kodymoodley.github.io/simpleowlapi/doc/) and examples below.
+For more information on how to use OWLAPI-Lite, see the [Javadocs](https://kodymoodley.github.io/owlapi-lite/doc/) and examples below.
 
 ##### Examples: ontology editing
 
 ```java
-import org.semanticweb.owl.simpleowlapi.*;
+import io.github.kodymoodley.owlapilite.*;
 import org.semanticweb.owlapi.model.*;
 
 // create a new SimpleOWLAPIFactory instance which allows the construction and manipulation of OWL ontologies (default OWL reasoner is JFACT)
@@ -114,7 +114,7 @@ s.createOntology("http://com.kodymoodley/ontologies/2020/testontology2#");
 s.setOntology("http://com.kodymoodley/ontologies/2020/testontology2#");
 // prints to console the IRI of the currently selected ontology
 s.getOntology(); 
-// prints to console the IRIs of all ontologies created / loaded within the current context (instance of the simpleOWLAPIFactory)
+// prints to console the IRIs of all ontologies created / loaded within the current context (instance of the OWLAPILiteFactory)
 s.getOntologies(); 
 // prints to console a structured representation of the main OWL entities in the active ontology
 s.printOntology();
@@ -127,9 +127,9 @@ s.saveOntology("testontology.owl");
 s.loadFromURL("https://protege.stanford.edu/ontologies/pizza/pizza.owl"); 
 // load an ontology into this context from a local file path. WARNING: you cannot load multiple ontologies with the same IRI into the same context!
 s.loadFromFile("path/to/ontology.owl");	
-// remove selected ontology from current context (simpleOWLAPIFactory instance) 
+// remove selected ontology from current context (OWLAPILiteFactory instance) 
 s.removeOntology(); 
-// remove ontology with specified IRI from current context (simpleOWLAPIFactory instance) 
+// remove ontology with specified IRI from current context (OWLAPILiteFactory instance) 
 s.removeOntology("http://com.kodymoodley/ontologies/2020/testontology2#"); 
 
 // remove all axioms from the currently selected ontology
@@ -191,7 +191,7 @@ s.owlReasoner.getObjectPropertyAssertions("knows");
 // for each object property R in the ontology, prints to console all individual name pairs (a,b) such that R(a, b) is an object property assertion entailed by the active ontology
 s.owlReasoner.getAllObjectPropertyAssertions(); 
 
-// prints to console the name of the OWL reasoner which is currently being used by the simpleOWLAPIFactory instance
+// prints to console the name of the OWL reasoner which is currently being used by the OWLAPILiteFactory instance
 s.owlReasoner.getName(); 
 // prints to console the name of the OWL 2 profile which the selected OWL reasoner supports
 s.owlReasoner.getOWLProfile(); 
@@ -208,13 +208,13 @@ s.owlReasoner.getOWLProfile();
 
 1. Get a copy of the code:
 
-        git clone https://github.com/kodymoodley/simpleowlapi.git
+        git clone https://github.com/kodymoodley/owlapi-lite.git
     
 2. Change into the `owlapi-lite/` directory.
 
-3. Type `mvn clean package`.  On build completion, the `target/` directory will contain two versions of the library: `simpleowlapi-lib-${version}.jar` and `simpleowlapi-lib-${version}-jar-with-dependencies.jar`.
+3. Type `mvn clean package`.  On build completion, the `target/` directory will contain two versions of the library: `owlapi-lite-${version}.jar` and `owlapi-lite-${version}-jar-with-dependencies.jar`.
 
 ### License and contributions
-The OWLAPI-Lite library is copyrighted by [Kody Moodley](https://sites.google.com/site/kodymoodley/) and released under the [GNU Affero License](https://github.com/kodymoodley/simpleowlapi/blob/master/LICENSE.md).
+The OWLAPI-Lite library is copyrighted by [Kody Moodley](https://kodymoodley.github.io) and released under the [GNU Affero License](https://github.com/kodymoodley/owlapi-lite/blob/master/LICENSE.md).
 
 Contributions and bug reports are helpful and welcome.
