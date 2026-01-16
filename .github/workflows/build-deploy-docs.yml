@@ -1,0 +1,41 @@
+name: Build and Deploy Docs
+
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build-and-deploy-docs:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Set up JDK 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: 'maven'
+      
+      - name: Build with Maven
+        run: mvn clean package
+      
+      - name: Copy Javadocs to doc folder
+        run: |
+          rm -rf doc/*
+          cp -r target/apidocs/* doc/
+      
+      - name: Commit and push documentation
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add doc/
+          git diff --staged --quiet || git commit -m "Update Javadocs [skip ci]"
+          git push
