@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - master
+  workflow_dispatch:
 
 jobs:
   build-and-deploy-docs:
@@ -23,6 +24,10 @@ jobs:
           java-version: '25'
           distribution: 'temurin'
           cache: 'maven'
+
+      - name: Run Maven Checkstyle
+        run: mvn checkstyle:check
+        continue-on-error: true
       
       - name: Build with Maven
         run: mvn clean package
