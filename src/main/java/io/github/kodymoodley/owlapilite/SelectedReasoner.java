@@ -1,4 +1,4 @@
-package org.semanticweb.owl.simpleowlapi;
+package io.github.kodymoodley.owlapilite;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -49,11 +49,6 @@ public class SelectedReasoner implements Serializable {
      */
     public static final SelectedReasoner HERMIT = getInstance("HERMIT", "OWL 2 DL");
     /**
-     * Pellet OWL 2 DL Reasoner selection instance
-     */
-    public static final SelectedReasoner PELLET = getInstance("PELLET", "OWL 2 DL");
-
-    /**
      * ArrayList of all OWL 2 reasoner selection instances which simpleOWLAPI is
      * able to use
      */
@@ -90,7 +85,6 @@ public class SelectedReasoner implements Serializable {
         REASONERS.add(JFACT);
         REASONERS.add(ELK);
         REASONERS.add(HERMIT);
-        REASONERS.add(PELLET);
     }
 
     /**

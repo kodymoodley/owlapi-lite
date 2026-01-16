@@ -1,4 +1,4 @@
-package org.semanticweb.owl.simpleowlapi;
+package io.github.kodymoodley.owlapilite;
 
 import org.semanticweb.owlapi.apibinding.OWLManager;
 import org.semanticweb.owlapi.expression.OWLEntityChecker;

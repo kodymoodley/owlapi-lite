@@ -1,4 +1,4 @@
-package org.semanticweb.owl.simpleowlapi;
+package io.github.kodymoodley.owlapilite;
 
 import org.semanticweb.owlapi.model.OWLEntity;
 import org.semanticweb.owlapi.util.CachingBidirectionalShortFormProvider;
