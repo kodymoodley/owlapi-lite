@@ -38,16 +38,16 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class SimpleOWLAPIFactoryTest {
+class OWLAPILiteFactoryTest {
     
-    private SimpleOWLAPIFactory factory;
+    private OWLAPILiteFactory factory;
     private PrintStream originalOut;
     private ByteArrayOutputStream testOutput;
     
     @BeforeEach
     void setUp() throws Exception {
         resetSingleton();
-        factory = SimpleOWLAPIFactory.getInstance();
+        factory = OWLAPILiteFactory.getInstance();
         
         // Capture System.out for testing console output
         originalOut = System.out;
@@ -62,7 +62,7 @@ class SimpleOWLAPIFactoryTest {
     }
     
     private void resetSingleton() throws Exception {
-        java.lang.reflect.Field instanceField = SimpleOWLAPIFactory.class.getDeclaredField("obj");
+        java.lang.reflect.Field instanceField = OWLAPILiteFactory.class.getDeclaredField("obj");
         instanceField.setAccessible(true);
         instanceField.set(null, null);
     }
@@ -70,8 +70,8 @@ class SimpleOWLAPIFactoryTest {
     @Test
     @DisplayName("Factory creates singleton instance")
     void getInstance_createsSingleton() {
-        SimpleOWLAPIFactory instance1 = SimpleOWLAPIFactory.getInstance();
-        SimpleOWLAPIFactory instance2 = SimpleOWLAPIFactory.getInstance();
+        OWLAPILiteFactory instance1 = OWLAPILiteFactory.getInstance();
+        OWLAPILiteFactory instance2 = OWLAPILiteFactory.getInstance();
         
         assertThat(instance1).isSameAs(instance2);
     }
@@ -147,7 +147,7 @@ class SimpleOWLAPIFactoryTest {
 
         // Reset and load
         resetSingleton();
-        SimpleOWLAPIFactory newFactory = SimpleOWLAPIFactory.getInstance();
+        OWLAPILiteFactory newFactory = OWLAPILiteFactory.getInstance();
         newFactory.loadFromFile("test-save.owl");
 
         assertThat(newFactory.getOntology().classesInSignature().count()).isEqualTo(2);

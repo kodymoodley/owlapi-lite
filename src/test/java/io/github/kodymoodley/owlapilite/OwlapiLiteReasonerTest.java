@@ -1,4 +1,4 @@
-// File: src/test/java/io/github/kodymoodley/owlapilite/SimpleOWLReasonerTest.java
+// File: src/test/java/io/github/kodymoodley/owlapilite/OWLAPILiteReasonerTest.java
 package io.github.kodymoodley.owlapilite;
 
 import org.junit.jupiter.api.*;
@@ -34,10 +34,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class SimpleOWLReasonerTest {
+class OWLAPILiteReasonerTest {
     
-    private SimpleOWLAPIFactory factory;
-    private SimpleOWLReasoner reasoner;
+    private OWLAPILiteFactory factory;
+    private OWLAPILiteReasoner reasoner;
     
     private void createTestOntology(String iriStr) throws Exception {
         factory.createOntology(iriStr);
@@ -56,7 +56,7 @@ class SimpleOWLReasonerTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        factory = SimpleOWLAPIFactory.getInstance();
+        factory = OWLAPILiteFactory.getInstance();
     }
     
     @Test

@@ -37,11 +37,11 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class CreateOntologyEntitiesIntegrationTest {
     
-    private SimpleOWLAPIFactory factory;
+    private OWLAPILiteFactory factory;
     
     @BeforeEach
     void setUp() {
-        factory = SimpleOWLAPIFactory.getInstance();
+        factory = OWLAPILiteFactory.getInstance();
     }
     
     @AfterEach
@@ -123,10 +123,10 @@ class CreateOntologyEntitiesIntegrationTest {
         factory.saveOntology(TestUtils.TEST_FILE_PATH);
         
         // Load in new factory
-        java.lang.reflect.Field instanceField = SimpleOWLAPIFactory.class.getDeclaredField("obj");
+        java.lang.reflect.Field instanceField = OWLAPILiteFactory.class.getDeclaredField("obj");
         instanceField.setAccessible(true);
         instanceField.set(null, null);
-        SimpleOWLAPIFactory newFactory = SimpleOWLAPIFactory.getInstance();
+        OWLAPILiteFactory newFactory = OWLAPILiteFactory.getInstance();
         newFactory.loadFromFile(TestUtils.TEST_FILE_PATH);
         
         assertThat(newFactory.getOntology().classesInSignature().count()).isEqualTo(3);

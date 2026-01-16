@@ -49,7 +49,7 @@ public class SelectedReasoner implements Serializable {
      */
     public static final SelectedReasoner HERMIT = getInstance("HERMIT", "OWL 2 DL");
     /**
-     * ArrayList of all OWL 2 reasoner selection instances which simpleOWLAPI is
+     * ArrayList of all OWL 2 reasoner selection instances which OWLAPI-Lite is
      * able to use
      */
     public static final ArrayList<SelectedReasoner> REASONERS = new ArrayList<SelectedReasoner>();
@@ -79,7 +79,7 @@ public class SelectedReasoner implements Serializable {
 
     /**
      * This is a static initialization block for collecting a list of all supported
-     * reasoners by simpleOWLAPI
+     * reasoners by OWLAPI-Lite
      */
     static {
         REASONERS.add(JFACT);

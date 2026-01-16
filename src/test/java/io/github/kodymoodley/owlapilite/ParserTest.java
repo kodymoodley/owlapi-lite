@@ -38,12 +38,12 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 class ParserTest {
 
     private Parser parser;
-    private SimpleOWLAPIFactory factory;
+    private OWLAPILiteFactory factory;
 
     @BeforeEach
     void setUp() throws Exception {
         parser = Parser.getInstance();
-        factory = SimpleOWLAPIFactory.getInstance();
+        factory = OWLAPILiteFactory.getInstance();
     }
 
     @Test
