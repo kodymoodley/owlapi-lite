@@ -131,7 +131,6 @@ public class SimpleOWLAPIFactory {
 	 */
 	private SimpleOWLAPIFactory(SelectedReasoner selectedReasoner) {
 		ontologyManager = OWLManager.createOWLOntologyManager();
-
 		setOWLReasoner(selectedReasoner);
 		fullIRIRendering = false;
 		dataFactory = new OWLDataFactoryImpl();
@@ -141,10 +140,7 @@ public class SimpleOWLAPIFactory {
 	 * Public constructor for SimpleOWLAPIFactory
 	 */
 	public SimpleOWLAPIFactory() {
-		ontologyManager = OWLManager.createOWLOntologyManager();
-		setOWLReasoner(selectedReasoner);
-		fullIRIRendering = false;
-		dataFactory = new OWLDataFactoryImpl();
+		this(SelectedReasoner.JFACT); // Use default reasoner
 	}
 
 	/**

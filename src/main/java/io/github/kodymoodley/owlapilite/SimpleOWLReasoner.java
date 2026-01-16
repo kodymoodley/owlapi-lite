@@ -133,6 +133,32 @@ public class SimpleOWLReasoner {
 	}
 
 	/**
+	 * Helper method to print a header with underline
+	 * 
+	 * @param text the header text to print
+	 */
+	private void printHeader(String text) {
+		System.out.println(text);
+		for (int i = 0; i < text.length(); i++)
+			System.out.print("-");
+		System.out.println();
+	}
+
+	/**
+	 * Helper method to handle inconsistent ontology exceptions
+	 * 
+	 * @param operation description of the operation being performed
+	 * @param entity    the entity or expression being operated on
+	 */
+	private void handleInconsistentOntology(String operation, String entity) {
+		System.out.println();
+		String entityPart = entity.isEmpty() ? "" : " " + entity;
+		System.out.println("OWLAPI-Lite REASONING ERROR: " + operation + entityPart
+				+ " is not possible because <" + ontology.getOntologyID().getDefaultDocumentIRI().get().toString()
+				+ ">" + " is inconsistent!");
+	}
+
+	/**
 	 * prints all atomic equivalent classes of a given class expression string to
 	 * console output
 	 * 
@@ -142,10 +168,7 @@ public class SimpleOWLReasoner {
 		System.out.println();
 		reasoner.flush();
 		try {
-			System.out.println("All equivalent classes of " + classEx);
-			for (int i = 0; i < classEx.length() + 25; i++)
-				System.out.print("-");
-			System.out.println();
+			printHeader("All equivalent classes of " + classEx);
 			Node<OWLClass> subclasses = reasoner.getEquivalentClasses(parser.createClassExpression(classEx));
 			int idx = 1;
 			for (OWLClass nc : subclasses) {
@@ -156,10 +179,7 @@ public class SimpleOWLReasoner {
 			}
 			System.out.println();
 		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println("OWLAPI-Lite REASONING ERROR: computing all equivalent classes of " + classEx
-					+ " is not possible because <" + ontology.getOntologyID().getDefaultDocumentIRI().get().toString()
-					+ ">" + " is inconsistent!");
+			handleInconsistentOntology("computing all equivalent classes of", classEx);
 		}
 	}
 
@@ -173,10 +193,7 @@ public class SimpleOWLReasoner {
 		System.out.println();
 		reasoner.flush();
 		try {
-			System.out.println("All subclasses of '" + classEx + "'");
-			for (int i = 0; i < classEx.length() + 18; i++)
-				System.out.print("-");
-			System.out.println();
+			printHeader("All subclasses of '" + classEx + "'");
 			NodeSet<OWLClass> subclasses = reasoner.getSubClasses(parser.createClassExpression(classEx), false);
 			int idx = 1;
 			for (Node<OWLClass> nc : subclasses) {
@@ -189,10 +206,7 @@ public class SimpleOWLReasoner {
 			}
 			System.out.println();
 		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println("OWLAPI-Lite REASONING ERROR: computing all subclasses of " + classEx
-					+ " is not possible because <" + ontology.getOntologyID().getDefaultDocumentIRI().get().toString()
-					+ ">" + " is inconsistent!");
+			handleInconsistentOntology("computing all subclasses of", classEx);
 		}
 	}
 
@@ -206,10 +220,7 @@ public class SimpleOWLReasoner {
 		System.out.println();
 		reasoner.flush();
 		try {
-			System.out.println("All superclasses of '" + classEx + "'");
-			for (int i = 0; i < classEx.length() + 20; i++)
-				System.out.print("-");
-			System.out.println();
+			printHeader("All superclasses of '" + classEx + "'");
 			NodeSet<OWLClass> supclasses = reasoner.getSuperClasses(parser.createClassExpression(classEx), false);
 			int idx = 1;
 			for (Node<OWLClass> nc : supclasses) {
@@ -222,10 +233,7 @@ public class SimpleOWLReasoner {
 			}
 			System.out.println();
 		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println("OWLAPI-Lite REASONING ERROR: computing all superclasses of " + classEx
-					+ " is not possible because <" + ontology.getOntologyID().getDefaultDocumentIRI().get().toString()
-					+ ">" + " is inconsistent!");
+			handleInconsistentOntology("computing all superclasses of", classEx);
 		}
 	}
 
@@ -237,13 +245,10 @@ public class SimpleOWLReasoner {
 		System.out.println();
 		reasoner.flush();
 		try {
-			System.out.println("All unsatisfiable classes in <"
-					+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">:");
-			for (int i = 0; i < ontology.getOntologyID().getDefaultDocumentIRI().get().toString().length() + 33; i++)
-				System.out.print("-");
-			System.out.println();
+			String headerText = "All unsatisfiable classes in <"
+					+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">:";
+			printHeader(headerText);
 			Node<OWLClass> classes = reasoner.getUnsatisfiableClasses();
-			// System.out.println("classes.getSize());
 			int idx = 1;
 			for (OWLClass c : classes) {
 				if (!c.isOWLNothing()) {
@@ -253,11 +258,7 @@ public class SimpleOWLReasoner {
 			}
 			System.out.println();
 		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println(
-					"OWLAPI-Lite REASONING ERROR: computing all unsatisfiable classes is not possible because <"
-							+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">"
-							+ " is inconsistent!");
+			handleInconsistentOntology("computing all unsatisfiable classes", "");
 		}
 	}
 
@@ -290,10 +291,7 @@ public class SimpleOWLReasoner {
 		System.out.println();
 		this.reasoner.flush();
 		try {
-			System.out.println("Types for individual: '" + ind + "'");
-			for (int i = 0; i < ind.length() + 22; i++)
-				System.out.print("-");
-			System.out.println();
+			printHeader("Types for individual: '" + ind + "'");
 			NodeSet<OWLClass> typesC = this.reasoner
 					.getTypes(dataFactory.getOWLNamedIndividual(IRI.create(ontologyIRI.toString() + ind)), false);
 			int idx = 1;
@@ -307,9 +305,7 @@ public class SimpleOWLReasoner {
 			}
 			System.out.println();
 		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println("OWLAPI-Lite REASONING ERROR: checking for entailed types is not possible because <"
-					+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">" + " is inconsistent!");
+			handleInconsistentOntology("checking for entailed types", "");
 		}
 	}
 
@@ -320,11 +316,8 @@ public class SimpleOWLReasoner {
 	public void getAllTypes() {
 		this.reasoner.flush();
 		try {
-			System.out.println(
-					"All Types in <" + ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">:");
-			for (int i = 0; i < ontology.getOntologyID().getDefaultDocumentIRI().get().toString().length() + 16; i++)
-				System.out.print("-");
-			System.out.println();
+			String headerText = "All Types in <" + ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">:";
+			printHeader(headerText);
 			for (OWLIndividual i : ontology.individualsInSignature(Imports.EXCLUDED)
 					.collect(Collectors.toCollection(HashSet::new))) {
 				System.out.println(Parser.renderer.render(i));
@@ -334,9 +327,7 @@ public class SimpleOWLReasoner {
 			}
 			System.out.println();
 		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println("OWLAPI-Lite REASONING ERROR: checking for entailed types is not possible because <"
-					+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">" + " is inconsistent!");
+			handleInconsistentOntology("checking for entailed types", "");
 		}
 	}
 
@@ -350,10 +341,7 @@ public class SimpleOWLReasoner {
 		System.out.println();
 		this.reasoner.flush();
 		try {
-			System.out.println("Object Property Assertions for: " + opropStr);
-			for (int i = 0; i < opropStr.length() + 32; i++)
-				System.out.print("-");
-			System.out.println();
+			printHeader("Object Property Assertions for: " + opropStr);
 			Set<OWLNamedIndividual> inds = ontology.individualsInSignature(Imports.EXCLUDED)
 					.collect(Collectors.toCollection(HashSet::new));
 			int idx = 1;
@@ -370,11 +358,7 @@ public class SimpleOWLReasoner {
 			if (inds.size() > 0)
 				System.out.println();
 		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println(
-					"OWLAPI-Lite REASONING ERROR: checking for entailed object property assertions is not possible because <"
-							+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">"
-							+ " is inconsistent!");
+			handleInconsistentOntology("checking for entailed object property assertions", "");
 		}
 	}
 
@@ -386,33 +370,7 @@ public class SimpleOWLReasoner {
 	 * @param opropStr string representing an object property
 	 */
 	public void getOPropertyAssertions(String opropStr) {
-		this.reasoner.flush();
-
-		try {
-			System.out.println("Object Property Assertions for: " + opropStr);
-			for (int i = 0; i < opropStr.length() + 32; i++)
-				System.out.print("-");
-			System.out.println();
-			Set<OWLNamedIndividual> inds = ontology.individualsInSignature(Imports.EXCLUDED)
-					.collect(Collectors.toCollection(HashSet::new));
-			for (OWLNamedIndividual i : inds) {
-				NodeSet<OWLNamedIndividual> indP = this.reasoner.getObjectPropertyValues(i,
-						dataFactory.getOWLObjectProperty(IRI.create(ontologyIRI.toString() + opropStr)));
-				for (Node<OWLNamedIndividual> n : indP) {
-					for (OWLNamedIndividual ai : n) {
-						System.out.println(Parser.renderer.render(i) + "," + Parser.renderer.render(ai));
-					}
-				}
-			}
-			if (inds.size() > 0)
-				System.out.println();
-		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println(
-					"OWLAPI-Lite REASONING ERROR: checking for entailed object property assertions is not possible because <"
-							+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">"
-							+ " is inconsistent!");
-		}
+		getObjectPropertyAssertions(opropStr);
 	}
 
 	/**
@@ -425,10 +383,7 @@ public class SimpleOWLReasoner {
 		OWLClassExpression cls = parser.createClassExpression(clsStr);
 		reasoner.flush();
 		try {
-			System.out.println("Individuals of: '" + clsStr + "'");
-			for (int i = 0; i < clsStr.length() + 16; i++)
-				System.out.print("-");
-			System.out.println();
+			printHeader("Individuals of: '" + clsStr + "'");
 			NodeSet<OWLNamedIndividual> inds = reasoner.getInstances(cls, false);
 			int idx = 1;
 			for (OWLNamedIndividual i : inds.entities().collect(Collectors.toCollection(HashSet::new))) {
@@ -439,9 +394,7 @@ public class SimpleOWLReasoner {
 			if (inds.entities().count() > 0)
 				System.out.println();
 		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println("OWLAPI-Lite REASONING ERROR: checking for instances is not possible because <"
-					+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">" + " is inconsistent!");
+			handleInconsistentOntology("checking for instances", "");
 		}
 	}
 
@@ -452,11 +405,9 @@ public class SimpleOWLReasoner {
 	public void getAllObjectPropertyAssertions() {
 		this.reasoner.flush();
 		try {
-			System.out.println("All Object Property Assertions in <"
-					+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">:");
-			for (int i = 0; i < ontology.getOntologyID().getDefaultDocumentIRI().get().toString().length() + 37; i++)
-				System.out.print("-");
-			System.out.println();
+			String headerText = "All Object Property Assertions in <"
+					+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">:";
+			printHeader(headerText);
 			for (OWLObjectProperty o : ontology.objectPropertiesInSignature(Imports.EXCLUDED)
 					.collect(Collectors.toCollection(HashSet::new))) {
 				getOPropertyAssertions(Parser.renderer.render(o));
@@ -464,11 +415,7 @@ public class SimpleOWLReasoner {
 			}
 			System.out.println();
 		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println(
-					"OWLAPI-Lite REASONING ERROR: checking for entailed object property assertions is not possible because <"
-							+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">"
-							+ " is inconsistent!");
+			handleInconsistentOntology("checking for entailed object property assertions", "");
 		}
 	}
 
@@ -478,26 +425,7 @@ public class SimpleOWLReasoner {
 	 * assertions they are involved in to console output
 	 */
 	public void getAllOPropertyAssertions() {
-		this.reasoner.flush();
-		try {
-			System.out.println("All Object Property Assertions in <"
-					+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">:");
-			for (int i = 0; i < ontology.getOntologyID().getDefaultDocumentIRI().get().toString().length() + 37; i++)
-				System.out.print("-");
-			System.out.println();
-			for (OWLObjectProperty o : ontology.objectPropertiesInSignature(Imports.EXCLUDED)
-					.collect(Collectors.toCollection(HashSet::new))) {
-				getOPropertyAssertions(Parser.renderer.render(o));
-				System.out.println();
-			}
-			System.out.println();
-		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println(
-					"OWLAPI-Lite REASONING ERROR: checking for entailed object property assertions is not possible because <"
-							+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">"
-							+ " is inconsistent!");
-		}
+		getAllObjectPropertyAssertions();
 	}
 
 	/**
@@ -536,10 +464,7 @@ public class SimpleOWLReasoner {
 						+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">!");
 			System.out.println();
 		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println("OWLAPI-Lite REASONING ERROR: checking if Axiom: " + axiomStr
-					+ " is entailed is not possible because <"
-					+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">" + " is inconsistent!");
+			handleInconsistentOntology("checking if Axiom: " + axiomStr + " is entailed", "");
 		}
 	}
 
@@ -564,10 +489,7 @@ public class SimpleOWLReasoner {
 						+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">!");
 			System.out.println();
 		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println("OWLAPI-Lite REASONING ERROR: checking if Class: " + clsStr
-					+ " is satisfiable is not possible because <"
-					+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">" + " is inconsistent!");
+			handleInconsistentOntology("checking if Class: " + clsStr + " is satisfiable", "");
 		}
 	}
 
@@ -588,22 +510,14 @@ public class SimpleOWLReasoner {
 					ontology, new SilentExplanationProgressMonitor());
 			OWLClassExpression cls = parser.createClassExpression(clsStr);
 			if (!reasoner.isSatisfiable(cls)) {
-				System.out.println("Explanation for unsatisfiability of '" + clsStr + "'");
-				for (int i = 0; i < clsStr.length() + 37; i++)
-					System.out.print("-");
-				System.out.println();
+				printHeader("Explanation for unsatisfiability of '" + clsStr + "'");
 				System.out.println();
 				Set<Set<OWLAxiom>> explanations = explanationGenerator.getExplanations(cls);
 
 				int count = 1;
 				for (Set<OWLAxiom> exp : explanations) {
-					System.out.println("Explanation " + count);
-					System.out.println("--------------");
-					for (OWLAxiom ex : exp) {
-						System.out.println(Parser.renderer.render(ex));
-					}
+					printExplanation(exp, count);
 					count++;
-					System.out.println();
 				}
 			} else {
 				System.out.println();
@@ -613,11 +527,7 @@ public class SimpleOWLReasoner {
 				System.out.println();
 			}
 		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println(
-					"OWLAPI-Lite REASONING ERROR: explanation of class unsatisfiability is not possible because <"
-							+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">"
-							+ " is inconsistent!");
+			handleInconsistentOntology("explanation of class unsatisfiability", "");
 		}
 	}
 
@@ -635,11 +545,9 @@ public class SimpleOWLReasoner {
 				Long.MAX_VALUE);
 		inconsistencyExplanationGenerator = inconsistencyExpFac.createExplanationGenerator(ontology);
 		if (!reasoner.isConsistent()) {
-			System.out.println("Explanation for inconsistency of <"
-					+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">:");
-			for (int i = 0; i < ontology.getOntologyID().getDefaultDocumentIRI().get().toString().length() + 36; i++)
-				System.out.print("-");
-			System.out.println();
+			String headerText = "Explanation for inconsistency of <"
+					+ ontology.getOntologyID().getDefaultDocumentIRI().get().toString() + ">:";
+			printHeader(headerText);
 			System.out.println();
 			OWLAxiom axiom = dataFactory.getOWLSubClassOfAxiom(dataFactory.getOWLThing(), dataFactory.getOWLNothing());
 			Set<Explanation<OWLAxiom>> explanations = inconsistencyExplanationGenerator.getExplanations(axiom);
@@ -673,10 +581,7 @@ public class SimpleOWLReasoner {
 			OWLAxiom axiom = parser.createAxiom(axiomStr);
 			Set<Set<OWLAxiom>> explanations = explanationGenerator.getExplanations(axiom);
 
-			System.out.println("Explanation for entailment of '" + axiomStr + "':");
-			for (int i = 0; i < axiomStr.length() + 31; i++)
-				System.out.print("-");
-			System.out.println();
+			printHeader("Explanation for entailment of '" + axiomStr + "':");
 			System.out.println();
 
 			int count = 1;
@@ -685,10 +590,7 @@ public class SimpleOWLReasoner {
 				count++;
 			}
 		} catch (InconsistentOntologyException ioe) {
-			System.out.println();
-			System.out.println("OWLAPI-Lite REASONING ERROR: explanation for entailment of " + axiomStr
-					+ " is not possible because <" + ontology.getOntologyID().getDefaultDocumentIRI().get().toString()
-					+ ">" + " is inconsistent!");
+			handleInconsistentOntology("explanation for entailment of " + axiomStr, "");
 		}
 	}
 
