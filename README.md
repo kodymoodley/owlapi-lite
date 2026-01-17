@@ -1,5 +1,5 @@
 # OWLAPI-Lite
-[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.18284701-blue)](https://doi.org/10.5281/zenodo.18284701) [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 [![Maven Central](https://img.shields.io/maven-central/v/io.github.kodymoodley/owlapi-lite.svg)](https://central.sonatype.com/artifact/io.github.kodymoodley/owlapi-lite)
 
 
