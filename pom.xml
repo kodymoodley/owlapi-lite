@@ -5,7 +5,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.github.kodymoodley</groupId>
 	<artifactId>owlapi-lite</artifactId>
-	<version>1.0.0</version>
+	<version>1.1.0</version>
 	<name>OWLAPI-Lite</name>
 	<description>A light-weight wrapper for the OWLAPI enabling rapid and concise development of OWL ontologies using Manchester OWL Syntax.</description>
 	<url>http://kodymoodley.github.io/owlapi-lite</url>
@@ -155,8 +155,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.11.0</version>
 				<configuration>
-					<source>25</source>
-					<target>25</target>
+					<source>21</source>
+					<target>21</target>
 					<encoding>UTF-8</encoding>
 				</configuration>
       		</plugin>
@@ -173,8 +173,8 @@
 	</build>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>25</maven.compiler.source>
-		<maven.compiler.target>25</maven.compiler.target>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 	</properties>
 	<distributionManagement>
 		<snapshotRepository>
