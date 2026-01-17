@@ -11,7 +11,7 @@ OWLAPI-Lite is a light-weight wrapper for the [OWLAPI](https://github.com/owlcs/
 
 1. [Jupyter notebooks](https://jupyter.org/)
 2. [IJava](https://github.com/SpencerPark/IJava) Jupyter kernel
-3. [Java JDK 25+](https://jdk.java.net/) linked to your IJava kernel
+3. [Java JDK 21+](https://jdk.java.net/) linked to your IJava kernel
 
 ##### Importing
 
@@ -37,6 +37,13 @@ The latter method is known to potentially cause problems due to [.ivy2](https://
 ```java
 %jars path/to/jar/file/owlapi-lite-${version}.jar
 ```
+Another known issue is when using OWLAPI-Lite from [mybinder](https://mybinder.org/) is the following error: 
+
+```java 
+java.lang.NullPointerException: Cannot invoke "org.semanticweb.owlapi.model.OWLStorerFactory.createStorer()" because "storerFactory" is null at uk.ac.manchester.cs.owl.owlapi.OWLOntologyManagerImpl.saveOntology(OWLOntologyManagerImpl.java:1370) at uk.ac.manchester.cs.owl.owlapi.OWLOntologyManagerImpl.saveOntology(OWLOntologyManagerImpl.java:1349) at io.github.kodymoodley.owlapilite.OWLAPILiteFactory.saveOntology(OWLAPILiteFactory.java:1530) at .(#93:2)
+```
+
+If you encounter this error, make use of the ```%jars``` method above to import OWLAPI-Lite in your Jupyter notebook.
 
 ##### Dependencies
 
@@ -198,14 +205,14 @@ s.owlReasoner.getSuperClasses("Robin");
 // computes and prints to console all sub classes (indirect) for the given class expression
 s.owlReasoner.getSubClasses("FlyingOrganism"); 
 // computes and prints to console all atomic classes equivalent to the given class expression
-s.owlReasoner.getEquivalentClasses("Robin and not FlyingOrganism);
+s.owlReasoner.getEquivalentClasses("Robin and not FlyingOrganism");
 
 // computes and prints to console all class names for which the given individual is an instance
 s.owlReasoner.getTypes("tweety"); 
 // for each individual name in the selected ontology, computes and prints to console all class names such that this individual is an instance of the class name
 s.owlReasoner.getAllTypes(); 
 // computes and prints to console all instances of the given class expression
-s.owlReasoner.getInstances("Robin and not FlyingOrganism); 
+s.owlReasoner.getInstances("Robin and not FlyingOrganism"); 
 
 // given an object property name R, prints to console all individual name pairs (a,b) such that R(a, b) is an object property assertion entailed by the selected ontology
 s.owlReasoner.getObjectPropertyAssertions("knows"); 
