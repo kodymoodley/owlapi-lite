@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+title: owlapi-lite
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Kody
+    family-names: Moodley
+    email: kody.moodley@gmail.com
+    affiliation: Independent
+    orcid: 'https://orcid.org/0000-0001-5666-1658'
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.14624851
+    description: Zenodo archived release v1.2.0
+repository-code: >-
+  https://github.com/kodymoodley/owlapi-lite
+url: >-
+  https://kodymoodley.github.io/owlapi-lite/
+abstract: >-
+  A light-weight wrapper for the OWLAPI enabling rapid and concise development of OWL ontologies using Manchester OWL Syntax.
+keywords:
+  - OWL
+  - OWLAPI
+  - Ontologies
+  - Semantic Web
+  - Manchester OWL Syntax
+  - Jupyter
+  - IJava
+  - Java
+license: AGPL-3.0
+version: "1.2.0"
+date-released: "2026-01-17"
